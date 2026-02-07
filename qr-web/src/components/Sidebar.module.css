@@ -1,0 +1,64 @@
+.sidebar {
+    height: 100%;
+    background: var(--sidebar-bg);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    color: #e6edf3;
+}
+
+.nav {
+    flex: 1;
+    overflow: auto;
+}
+
+.navLink {
+    border-radius: 6px;
+    cursor: grab;
+}
+
+.navLink:active {
+    cursor: grabbing;
+}
+
+.navLink[data-active] {
+    background: #21262d;
+}
+
+.sectionLabel {
+    user-select: none;
+}
+
+.dropZone {
+    border-radius: 6px;
+    padding: 4px 0;
+    min-height: 24px;
+    transition: background 0.15s ease;
+}
+
+.dropZone[data-dragging] {
+    background: var(--mantine-color-blue-filled);
+    opacity: 0.2;
+}
+
+.folderHeader {
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 4px 6px;
+    align-items: center;
+    user-select: none;
+}
+
+.folderHeader:hover {
+    background: var(--mantine-color-default-hover);
+}

@@ -1,0 +1,33 @@
+{
+    "name": "Shorty (QR + Kutt)",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "20",
+            "nodeGypDependencies": true,
+            "installYarnUsingApt": false,
+            "installPnpmUsingApt": true
+        }
+    },
+    "postCreateCommand": "pnpm install",
+    "forwardPorts": [3000, 8080],
+    "portsAttributes": {
+        "3000": { "label": "qr-web" },
+        "8080": { "label": "qr-api" }
+    },
+    "containerEnv": {
+        "DB_PATH": "${containerWorkspaceFolder}/.data/db.sqlite",
+        "UPLOADS_PATH": "${containerWorkspaceFolder}/.data/uploads",
+        "KUTT_API_KEY": "",
+        "QR_API_URL": "http://localhost:8080"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "ms-vscode.vscode-typescript-next"
+            ]
+        }
+    }
+}

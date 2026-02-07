@@ -1,0 +1,12 @@
+:root {
+    --app-bg: #0d1117;
+    --sidebar-bg: #161b22;
+    --border: #30363d;
+}
+
+body {
+    margin: 0;
+    background: var(--app-bg);
+    color: #e6edf3;
+    font-family: system-ui, -apple-system, sans-serif;
+}

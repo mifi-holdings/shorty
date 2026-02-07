@@ -1,0 +1,12 @@
+node_modules
+.pnpm-store
+.next
+dist
+build
+coverage
+*.sqlite
+*.tsbuildinfo
+uploads
+.data
+# Generated / vendored
+qr-web/next-env.d.ts

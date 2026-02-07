@@ -1,0 +1,3 @@
+packages:
+    - "qr-api"
+    - "qr-web"

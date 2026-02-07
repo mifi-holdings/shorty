@@ -1,0 +1,93 @@
+# Deploy: build image, push to registry, trigger Portainer stack redeploy.
+# Runs on push/tag/manual to main only, after ci workflow succeeds.
+when:
+    - branch: main
+      event: [push, tag, manual]
+    - event: deployment
+      evaluate: 'CI_PIPELINE_DEPLOY_TARGET == "production"'
+
+depends_on:
+    - ci
+
+steps:
+    - name: Docker image build
+      image: docker:latest
+      environment:
+          REGISTRY_REPO: git.mifi.dev/mifi-holdings/shorty
+          DOCKER_API_VERSION: '1.43'
+          DOCKER_BUILDKIT: '1'
+      volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+      commands:
+          - set -e
+          - echo "=== Building Docker image (BuildKit) ==="
+          - 'echo "Commit SHA: ${CI_COMMIT_SHA:0:8}"'
+          - 'echo "Registry repo: $REGISTRY_REPO"'
+          - |
+              build() {
+                docker build \
+                  --progress=plain \
+                  --tag $REGISTRY_REPO:${CI_COMMIT_SHA} \
+                  --tag $REGISTRY_REPO:latest \
+                  --label "git.commit=${CI_COMMIT_SHA}" \
+                  --label "git.branch=${CI_COMMIT_BRANCH}" \
+                  .
+              }
+              for attempt in 1 2 3; do
+                echo "Build attempt $attempt/3"
+                if build; then
+                  echo "✓ Docker image built successfully"
+                  exit 0
+                fi
+                echo "Build attempt $attempt failed, retrying in 30s..."
+                sleep 30
+              done
+              echo "All build attempts failed"
+              exit 1
+
+    - name: Push to registry
+      image: docker:latest
+      environment:
+          DOCKER_API_VERSION: '1.43'
+          REGISTRY_URL: git.mifi.dev
+          REGISTRY_REPO: git.mifi.dev/mifi-holdings/shorty
+          REGISTRY_USERNAME:
+              from_secret: gitea_registry_username
+          REGISTRY_PASSWORD:
+              from_secret: gitea_package_token
+      volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+      commands:
+          - set -e
+          - echo "=== Pushing to registry ==="
+          - 'echo "Registry: $REGISTRY_URL"'
+          - 'echo "Repository: $REGISTRY_REPO"'
+          - |
+              echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY_URL" \
+                -u "$REGISTRY_USERNAME" \
+                --password-stdin
+          - docker push $REGISTRY_REPO:${CI_COMMIT_SHA}
+          - docker push $REGISTRY_REPO:latest
+          - echo "✓ Images pushed successfully"
+      depends_on:
+          - Docker image build
+
+    - name: Trigger Portainer stack redeploy
+      image: curlimages/curl:latest
+      environment:
+          PORTAINER_WEBHOOK_URL:
+              from_secret: portainer_webhook_url
+      commands:
+          - set -e
+          - echo "=== Triggering Portainer stack redeploy ==="
+          - |
+              resp=$(curl -s -w "\n%{http_code}" -X POST "$PORTAINER_WEBHOOK_URL")
+              body=$(echo "$resp" | head -n -1)
+              code=$(echo "$resp" | tail -n 1)
+              if [ "$code" != "200" ] && [ "$code" != "204" ]; then
+                echo "Webhook failed (HTTP $code): $body"
+                exit 1
+              fi
+              echo "✓ Portainer redeploy triggered (HTTP $code)"
+      depends_on:
+          - Push to registry

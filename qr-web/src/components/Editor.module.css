@@ -1,0 +1,28 @@
+.root {
+    display: flex;
+    gap: 24px;
+    padding: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.editor {
+    flex: 0 0 360px;
+}
+
+.preview {
+    flex: 1;
+    min-width: 0;
+}
+
+.paper {
+    background: var(--sidebar-bg);
+    border-color: var(--border);
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+}

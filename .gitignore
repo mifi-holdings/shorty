@@ -1,0 +1,24 @@
+# Dependencies and lockfile (keep pnpm-lock.yaml committed for CI)
+node_modules
+.pnpm-store
+
+# Build and runtime
+.next
+dist
+build
+coverage
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Data and secrets
+*.sqlite
+.env
+.env.local
+.env.*.local
+uploads
+.data
+
+# OS and misc
+.DS_Store
+*.log
+Thumbs.db

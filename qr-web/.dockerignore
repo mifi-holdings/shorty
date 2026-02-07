@@ -1,0 +1,30 @@
+# Dependencies (reinstalled in image)
+node_modules
+.pnpm-store
+
+# Build output (rebuilt in image)
+.next
+out
+dist
+
+# Dev and test
+coverage
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+vitest.config.ts
+.env
+.env.*
+!.env.example
+
+# Git and IDE
+.git
+.gitignore
+.dockerignore
+*.md
+Dockerfile
+
+# Generated
+next-env.d.ts
+*.tsbuildinfo

@@ -1,0 +1,27 @@
+# Dependencies (reinstalled in image)
+node_modules
+.pnpm-store
+
+# Build output (rebuilt in image)
+dist
+
+# Dev and test
+coverage
+*.test.ts
+*.spec.ts
+vitest.config.ts
+.env
+.env.*
+!.env.example
+
+# Git and IDE
+.git
+.gitignore
+.dockerignore
+*.md
+Dockerfile
+
+# Data (mounted at runtime)
+*.sqlite
+.data
+uploads
