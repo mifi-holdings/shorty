@@ -35,9 +35,15 @@ export function ExportPanel({ data, recipe, logoUrl, projectName }: ExportPanelP
         return qr;
     }, [data, recipe, logoUrl]);
 
+    const toBlob = (raw: Blob | Buffer | null): Blob | null => {
+        if (!raw) return null;
+        return raw instanceof Blob ? raw : new Blob([raw as BlobPart]);
+    };
+
     const handleSvg = useCallback(async () => {
         const qr = getQrInstance();
-        const blob = await qr.getRawData('svg');
+        const raw = await qr.getRawData('svg');
+        const blob = toBlob(raw);
         if (!blob) return;
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -49,7 +55,8 @@ export function ExportPanel({ data, recipe, logoUrl, projectName }: ExportPanelP
 
     const handlePng = useCallback(async () => {
         const qr = getQrInstance();
-        const blob = await qr.getRawData('png');
+        const raw = await qr.getRawData('png');
+        const blob = toBlob(raw);
         if (!blob) return;
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -61,7 +68,8 @@ export function ExportPanel({ data, recipe, logoUrl, projectName }: ExportPanelP
 
     const handlePdf = useCallback(async () => {
         const qr = getQrInstance();
-        const blob = await qr.getRawData('png');
+        const raw = await qr.getRawData('png');
+        const blob = toBlob(raw);
         if (!blob) return;
         const arrayBuffer = await blob.arrayBuffer();
         const pdfDoc = await PDFDocument.create();
@@ -84,7 +92,7 @@ export function ExportPanel({ data, recipe, logoUrl, projectName }: ExportPanelP
             page.drawText(urlText, { x: 50, y: 60, size: 10 });
         }
         const pdfBytes = await pdfDoc.save();
-        const url = URL.createObjectURL(new Blob([pdfBytes], { type: 'application/pdf' }));
+        const url = URL.createObjectURL(new Blob([pdfBytes as BlobPart], { type: 'application/pdf' }));
         const a = document.createElement('a');
         a.href = url;
         a.download = `qr-${projectName || 'export'}.pdf`.replace(/[^a-z0-9.-]/gi, '-');

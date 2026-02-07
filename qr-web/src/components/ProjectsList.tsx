@@ -1,6 +1,6 @@
 'use client';
 
-import { Stack, Text, Center } from '@mantine/core';
+import { Stack, Text } from '@mantine/core';
 import classes from './ProjectsList.module.css';
 
 export function ProjectsList() {

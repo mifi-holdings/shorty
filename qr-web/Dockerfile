@@ -4,6 +4,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install
 COPY . .
+RUN mkdir -p /app/public
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm run build
 

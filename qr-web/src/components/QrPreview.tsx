@@ -17,7 +17,8 @@ export function QrPreview({ data, recipe, logoUrl, size = 256 }: QrPreviewProps)
     const qrRef = useRef<QRCodeStyling | null>(null);
 
     useEffect(() => {
-        if (!ref.current) return;
+        const el = ref.current;
+        if (!el) return;
         const qr = new QRCodeStyling(
             buildQrStylingOptions(recipe, {
                 width: size,
@@ -27,12 +28,12 @@ export function QrPreview({ data, recipe, logoUrl, size = 256 }: QrPreviewProps)
             }) as ConstructorParameters<typeof QRCodeStyling>[0],
         );
         qrRef.current = qr;
-        qr.append(ref.current);
+        qr.append(el);
         return () => {
-            ref.current?.replaceChildren();
+            el.replaceChildren();
             qrRef.current = null;
         };
-    }, [size]);
+    }, [data, logoUrl, recipe, size]);
 
     useEffect(() => {
         const qr = qrRef.current;
