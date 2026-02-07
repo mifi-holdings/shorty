@@ -14,4 +14,4 @@ http:
     serversTransports:
         kutt-long-timeout:
             forwardingTimeouts:
-                responseHeaderTimeout: "300s"
+                responseHeaderTimeout: '300s'
