@@ -62,7 +62,7 @@ steps:
               BODY=$(printf '{"username":"WoodpeckerBot","content":"[%s - Build #%s] Docker images build success 🎉"}' "$CI_REPO" "$CI_PIPELINE_NUMBER")
               curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" "$DISCORD_WEBHOOK_URL"
       depends_on:
-          - Docker image build (qr-api + qr-web, multi-arch)
+          - Docker image build (qr-api + qr-web)
       when:
           - status: [success]
 
@@ -76,7 +76,7 @@ steps:
               BODY=$(printf '{"username":"WoodpeckerBot","content":"[%s - Build #%s] Docker images build failure 💩"}' "$CI_REPO" "$CI_PIPELINE_NUMBER")
               curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" "$DISCORD_WEBHOOK_URL"
       depends_on:
-          - Docker image build (qr-api + qr-web, multi-arch)
+          - Docker image build (qr-api + qr-web)
       when:
           - status: [failure]
 
@@ -98,7 +98,7 @@ steps:
               fi
               echo "✓ Portainer redeploy triggered (HTTP $code)"
       depends_on:
-          - Docker image build (qr-api + qr-web, multi-arch)
+          - Docker image build (qr-api + qr-web)
 
     - name: Send Deploy Status Notification (success)
       image: curlimages/curl
