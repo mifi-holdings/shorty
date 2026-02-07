@@ -28,3 +28,5 @@ Dockerfile
 # Generated
 next-env.d.ts
 *.tsbuildinfo
+
+traefik-kutt-timeout.example.yml

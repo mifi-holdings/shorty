@@ -68,10 +68,10 @@ services:
             MAIL_FROM: 'mifi Holdings Shorty <noreply@mifi.holdings>'
             MAIL_PASSWORD: '${SMTP_PASSWORD:?Set SMTP_PASSWORD}'
             NODE_ENV: production
-            OIDC_ENABLED: 'true'
-            OIDC_ISSUER: 'https://git.mifi.dev'
-            OIDC_CLIENT_ID: '2a6d1ecd-4e2f-42e5-922e-22e878230488'
-            OIDC_CLIENT_SECRET: '${OIDC_CLIENT_SECRET:?Set OIDC_CLIENT_SECRET}'
+            # OIDC_ENABLED: 'true'
+            # OIDC_ISSUER: 'https://git.mifi.dev'
+            # OIDC_CLIENT_ID: '2a6d1ecd-4e2f-42e5-922e-22e878230488'
+            # OIDC_CLIENT_SECRET: '${OIDC_CLIENT_SECRET:?Set OIDC_CLIENT_SECRET}'
             REDIS_ENABLED: 'true'
             REDIS_HOST: kutt_redis
             REDIS_PORT: '6379'
@@ -85,6 +85,7 @@ services:
             - 'traefik.http.routers.kutt-mifi.tls.certresolver=letsencrypt'
             - 'traefik.http.routers.kutt-mifi.service=kutt-short'
             - 'traefik.http.services.kutt-short.loadbalancer.server.port=3000'
+            - 'traefik.http.services.kutt-short.loadbalancer.serversTransport=kutt-long-timeout'
 
     qr_api:
         image: ${REGISTRY:-git.mifi.dev}/mifi-holdings/shorty-qr-api:${IMAGE_TAG:-latest}
@@ -122,7 +123,7 @@ services:
             - 'traefik.http.routers.qr-web.tls.certresolver=letsencrypt'
             - 'traefik.http.routers.qr-web.service=qr-web'
             - 'traefik.http.routers.qr-web.middlewares=qr-web-basicauth'
-            - 'traefik.http.middlewares.qr-web-basicauth.basicauth.users=mifi:$$2y$$05$$TS20fkfrmJ3MLc.cgfM6OcuowOstcy/2DTOq0YfirUDU3b0vtNz.'
+            - 'traefik.http.middlewares.qr-web-basicauth.basicauth.users=mifi:$$apr1$$9fgAWvE1$$bLGgUtpFjdaexkV5gooWq.'
             - 'traefik.http.services.qr-web.loadbalancer.server.port=3000'
 
 networks:

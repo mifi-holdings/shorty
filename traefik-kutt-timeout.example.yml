@@ -1,0 +1,17 @@
+# Example Traefik dynamic config: longer backend timeout for Kutt.
+#
+# Use a SEPARATE file (e.g. serverstransports.yaml or kutt-timeout.yaml), NOT inside
+# routers.yaml — Traefik can reject serversTransports in a file it treats as routers-only.
+# Place this file in the same directory as your other dynamic config (e.g. /etc/traefik/conf.d/)
+# so the file provider picks it up.
+#
+# Then uncomment the serversTransport label on the kutt service in docker-compose.portainer.yml.
+#
+# responseHeaderTimeout: time to wait for backend response headers (0 = no timeout).
+# 300s helps avoid 504 Gateway Timeout when Kutt or OIDC is slow.
+# If 504s persist, also raise entrypoint transport.respondingTimeouts.readTimeout in Traefik static config.
+http:
+    serversTransports:
+        kutt-long-timeout:
+            forwardingTimeouts:
+                responseHeaderTimeout: "300s"
