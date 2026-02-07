@@ -127,14 +127,13 @@ describe('buildQrStylingOptions', () => {
         ).toEqual(g);
     });
 
-    it('uses imageOptions and shape from recipe', () => {
+    it('uses imageOptions from recipe (shape always square)', () => {
         const opts = buildQrStylingOptions({
             imageOptions: {
                 hideBackgroundDots: false,
                 imageSize: 0.5,
                 margin: 5,
             },
-            shape: 'circle',
         });
         expect(
             (opts.imageOptions as { hideBackgroundDots: boolean })
@@ -144,7 +143,8 @@ describe('buildQrStylingOptions', () => {
             0.5,
         );
         expect((opts.imageOptions as { margin: number }).margin).toBe(5);
-        expect(opts.shape).toBe('circle');
+        // shape is always 'square' (circle has rendering issues in qr-code-styling)
+        expect(opts.shape).toBe('square');
     });
 });
 

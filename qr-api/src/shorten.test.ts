@@ -35,7 +35,10 @@ describe('shortenUrl', () => {
                     'Content-Type': 'application/json',
                     'X-API-Key': 'test-key',
                 },
-                body: JSON.stringify({ target: 'https://example.com' }),
+                body: JSON.stringify({
+                    target: 'https://example.com',
+                    domain: 'mifi.me',
+                }),
             }),
         );
     });
@@ -54,6 +57,7 @@ describe('shortenUrl', () => {
             expect.objectContaining({
                 body: JSON.stringify({
                     target: 'https://example.com',
+                    domain: 'mifi.me',
                     customurl: 'myslug',
                 }),
             }),
