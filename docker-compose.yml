@@ -128,10 +128,10 @@ services:
             QR_API_URL: http://qr_api:8080
         healthcheck:
             test:
-                [
-                    'CMD-SHELL',
-                    'node -e "require(''http'').get(''http://127.0.0.1:3000/'', (r) => { r.resume(); process.exit(r.statusCode >= 200 && r.statusCode < 500 ? 0 : 1); }).on(''error'', () => process.exit(1))"',
-                ]
+                - CMD
+                - node
+                - -e
+                - 'require("http").get("http://0.0.0.0:3000/", {timeout: 5000}, (r) => { r.resume(); process.exit(r.statusCode >= 200 && r.statusCode < 500 ? 0 : 1); }).on("error", () => process.exit(1))'
             interval: 30s
             timeout: 10s
             retries: 3

@@ -1,25 +1,23 @@
-# Build stage: TypeScript only (no native deps in this stage).
+# Build stage: use npm (not pnpm) to avoid workspace issues with better-sqlite3.
 FROM node:20-bookworm-slim AS builder
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install
+COPY package.json ./
+RUN npm install
+# Verify better-sqlite3 was compiled; fail build if not.
+RUN test -f node_modules/better-sqlite3/build/Release/better_sqlite3.node || \
+    (echo "ERROR: better-sqlite3.node not found after npm install" && exit 1)
 COPY . .
-RUN pnpm run build
+RUN npm run build
+RUN npm prune --production
 
-# Runtime: install deps here so better-sqlite3 is compiled for this exact image/platform.
+# Runtime: copy pre-built node_modules from builder.
 FROM node:20-bookworm-slim
 WORKDIR /app
 ENV NODE_ENV=production
-# Install build deps needed to compile better-sqlite3; remove after install to keep image small.
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
-    && rm -rf /var/lib/apt/lists/*
-RUN corepack enable && corepack prepare pnpm@latest --activate
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --prod \
-    && apt-get purge -y python3 make g++ \
-    && apt-get autoremove -y --purge \
-    && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./package.json
 EXPOSE 8080
 CMD ["node", "dist/index.js"]
