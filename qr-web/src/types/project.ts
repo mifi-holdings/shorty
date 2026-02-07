@@ -27,7 +27,11 @@ export interface RecipeOptions {
     contentType?: ContentType;
     image?: string;
     qrOptions?: { type?: string; mode?: string; errorCorrectionLevel?: string };
-    imageOptions?: { hideBackgroundDots?: boolean; imageSize?: number; margin?: number };
+    imageOptions?: {
+        hideBackgroundDots?: boolean;
+        imageSize?: number;
+        margin?: number;
+    };
     backgroundOptions?: {
         color?: string;
         gradient?: QrGradient;
@@ -39,8 +43,16 @@ export interface RecipeOptions {
         gradient?: QrGradient;
         roundSize?: boolean;
     };
-    cornersSquareOptions?: { color?: string; type?: string; gradient?: QrGradient };
-    cornersDotOptions?: { color?: string; type?: string; gradient?: QrGradient };
+    cornersSquareOptions?: {
+        color?: string;
+        type?: string;
+        gradient?: QrGradient;
+    };
+    cornersDotOptions?: {
+        color?: string;
+        type?: string;
+        gradient?: QrGradient;
+    };
     shape?: 'square' | 'circle';
     margin?: number;
 }

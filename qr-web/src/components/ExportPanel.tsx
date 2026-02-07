@@ -16,7 +16,12 @@ interface ExportPanelProps {
     projectName?: string;
 }
 
-export function ExportPanel({ data, recipe, logoUrl, projectName }: ExportPanelProps) {
+export function ExportPanel({
+    data,
+    recipe,
+    logoUrl,
+    projectName,
+}: ExportPanelProps) {
     const qrRef = useRef<QRCodeStyling | null>(null);
 
     const getQrInstance = useCallback(() => {
@@ -27,10 +32,14 @@ export function ExportPanel({ data, recipe, logoUrl, projectName }: ExportPanelP
             image: logoUrl || undefined,
         });
         if (qrRef.current) {
-            qrRef.current.update(opts as Parameters<QRCodeStyling['update']>[0]);
+            qrRef.current.update(
+                opts as Parameters<QRCodeStyling['update']>[0],
+            );
             return qrRef.current;
         }
-        const qr = new QRCodeStyling(opts as ConstructorParameters<typeof QRCodeStyling>[0]);
+        const qr = new QRCodeStyling(
+            opts as ConstructorParameters<typeof QRCodeStyling>[0],
+        );
         qrRef.current = qr;
         return qr;
     }, [data, recipe, logoUrl]);
@@ -48,7 +57,10 @@ export function ExportPanel({ data, recipe, logoUrl, projectName }: ExportPanelP
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `qr-${projectName || 'export'}.svg`.replace(/[^a-z0-9.-]/gi, '-');
+        a.download = `qr-${projectName || 'export'}.svg`.replace(
+            /[^a-z0-9.-]/gi,
+            '-',
+        );
         a.click();
         URL.revokeObjectURL(url);
     }, [getQrInstance, projectName]);
@@ -61,7 +73,10 @@ export function ExportPanel({ data, recipe, logoUrl, projectName }: ExportPanelP
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `qr-${projectName || 'export'}.png`.replace(/[^a-z0-9.-]/gi, '-');
+        a.download = `qr-${projectName || 'export'}.png`.replace(
+            /[^a-z0-9.-]/gi,
+            '-',
+        );
         a.click();
         URL.revokeObjectURL(url);
     }, [getQrInstance, projectName]);
@@ -92,10 +107,15 @@ export function ExportPanel({ data, recipe, logoUrl, projectName }: ExportPanelP
             page.drawText(urlText, { x: 50, y: 60, size: 10 });
         }
         const pdfBytes = await pdfDoc.save();
-        const url = URL.createObjectURL(new Blob([pdfBytes as BlobPart], { type: 'application/pdf' }));
+        const url = URL.createObjectURL(
+            new Blob([pdfBytes as BlobPart], { type: 'application/pdf' }),
+        );
         const a = document.createElement('a');
         a.href = url;
-        a.download = `qr-${projectName || 'export'}.pdf`.replace(/[^a-z0-9.-]/gi, '-');
+        a.download = `qr-${projectName || 'export'}.pdf`.replace(
+            /[^a-z0-9.-]/gi,
+            '-',
+        );
         a.click();
         URL.revokeObjectURL(url);
     }, [getQrInstance, data, projectName]);
@@ -106,13 +126,28 @@ export function ExportPanel({ data, recipe, logoUrl, projectName }: ExportPanelP
                 Export
             </Text>
             <Group>
-                <Button leftSection={<IconDownload size={16} />} variant="light" size="sm" onClick={handleSvg}>
+                <Button
+                    leftSection={<IconDownload size={16} />}
+                    variant="light"
+                    size="sm"
+                    onClick={handleSvg}
+                >
                     SVG
                 </Button>
-                <Button leftSection={<IconDownload size={16} />} variant="light" size="sm" onClick={handlePng}>
+                <Button
+                    leftSection={<IconDownload size={16} />}
+                    variant="light"
+                    size="sm"
+                    onClick={handlePng}
+                >
                     PNG
                 </Button>
-                <Button leftSection={<IconDownload size={16} />} variant="light" size="sm" onClick={handlePdf}>
+                <Button
+                    leftSection={<IconDownload size={16} />}
+                    variant="light"
+                    size="sm"
+                    onClick={handlePdf}
+                >
                     PDF
                 </Button>
             </Group>

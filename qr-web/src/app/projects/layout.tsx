@@ -6,11 +6,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { ProjectsProvider, useProjects } from '@/contexts/ProjectsContext';
 import classes from './layout.module.css';
 
-function ProjectsLayoutInner({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+function ProjectsLayoutInner({ children }: { children: React.ReactNode }) {
     const { refetch } = useProjects();
 
     useEffect(() => {

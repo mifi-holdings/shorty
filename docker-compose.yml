@@ -11,7 +11,11 @@ services:
             POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
             POSTGRES_DB: ${DB_NAME:-kutt}
         healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-kutt} -d ${DB_NAME:-kutt}"]
+            test:
+                [
+                    'CMD-SHELL',
+                    'pg_isready -U ${DB_USER:-kutt} -d ${DB_NAME:-kutt}',
+                ]
             interval: 10s
             timeout: 5s
             retries: 5
@@ -39,29 +43,29 @@ services:
         environment:
             DB_CLIENT: pg
             DB_HOST: kutt_db
-            DB_PORT: "5432"
+            DB_PORT: '5432'
             DB_USER: ${DB_USER:-kutt}
             DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
             DB_NAME: ${DB_NAME:-kutt}
-            REDIS_ENABLED: "true"
+            REDIS_ENABLED: 'true'
             REDIS_HOST: kutt_redis
-            REDIS_PORT: "6379"
+            REDIS_PORT: '6379'
             DEFAULT_DOMAIN: mifi.me
             NODE_ENV: production
             JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
         labels:
-            - "traefik.enable=true"
-            - "docker.network=marina-net"
-            - "traefik.http.routers.kutt-mifi.rule=Host(`mifi.me`)"
-            - "traefik.http.routers.kutt-mifi.entrypoints=websecure"
-            - "traefik.http.routers.kutt-mifi.tls.certresolver=letsencrypt"
-            - "traefik.http.routers.kutt-mifi.service=kutt-short"
-            - "traefik.http.services.kutt-short.loadbalancer.server.port=3000"
-            - "traefik.http.routers.kutt-link.rule=Host(`link.mifi.me`)"
-            - "traefik.http.routers.kutt-link.entrypoints=websecure"
-            - "traefik.http.routers.kutt-link.tls.certresolver=letsencrypt"
-            - "traefik.http.routers.kutt-link.service=kutt"
-            - "traefik.http.services.kutt.loadbalancer.server.port=3000"
+            - 'traefik.enable=true'
+            - 'docker.network=marina-net'
+            - 'traefik.http.routers.kutt-mifi.rule=Host(`mifi.me`)'
+            - 'traefik.http.routers.kutt-mifi.entrypoints=websecure'
+            - 'traefik.http.routers.kutt-mifi.tls.certresolver=letsencrypt'
+            - 'traefik.http.routers.kutt-mifi.service=kutt-short'
+            - 'traefik.http.services.kutt-short.loadbalancer.server.port=3000'
+            - 'traefik.http.routers.kutt-link.rule=Host(`link.mifi.me`)'
+            - 'traefik.http.routers.kutt-link.entrypoints=websecure'
+            - 'traefik.http.routers.kutt-link.tls.certresolver=letsencrypt'
+            - 'traefik.http.routers.kutt-link.service=kutt'
+            - 'traefik.http.services.kutt.loadbalancer.server.port=3000'
 
     qr_api:
         build:
@@ -75,7 +79,7 @@ services:
             - /mnt/config/docker/qr/db:/data
             - /mnt/config/docker/qr/uploads:/uploads
         environment:
-            PORT: "8080"
+            PORT: '8080'
             DB_PATH: /data/db.sqlite
             UPLOADS_PATH: /uploads
             KUTT_API_KEY: ${KUTT_API_KEY:-}
@@ -95,15 +99,15 @@ services:
         environment:
             QR_API_URL: http://qr_api:8080
         labels:
-            - "traefik.enable=true"
-            - "docker.network=marina-net"
-            - "traefik.http.routers.qr-web.rule=Host(`qr.mifi.dev`)"
-            - "traefik.http.routers.qr-web.entrypoints=websecure"
-            - "traefik.http.routers.qr-web.tls.certresolver=letsencrypt"
-            - "traefik.http.routers.qr-web.service=qr-web"
-            - "traefik.http.routers.qr-web.middlewares=qr-web-basicauth"
-            - "traefik.http.middlewares.qr-web-basicauth.basicauth.users=mifi:$$2y$$05$$TS20fkfrmJ3MLc.cgfM6OcuowOstcy/2DTOq0YfirUDU3b0vtNz."
-            - "traefik.http.services.qr-web.loadbalancer.server.port=3000"
+            - 'traefik.enable=true'
+            - 'docker.network=marina-net'
+            - 'traefik.http.routers.qr-web.rule=Host(`qr.mifi.dev`)'
+            - 'traefik.http.routers.qr-web.entrypoints=websecure'
+            - 'traefik.http.routers.qr-web.tls.certresolver=letsencrypt'
+            - 'traefik.http.routers.qr-web.service=qr-web'
+            - 'traefik.http.routers.qr-web.middlewares=qr-web-basicauth'
+            - 'traefik.http.middlewares.qr-web-basicauth.basicauth.users=mifi:$$2y$$05$$TS20fkfrmJ3MLc.cgfM6OcuowOstcy/2DTOq0YfirUDU3b0vtNz.'
+            - 'traefik.http.services.qr-web.loadbalancer.server.port=3000'
 
 networks:
     marina-net:

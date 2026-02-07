@@ -13,9 +13,9 @@ steps:
     - name: Docker image build (qr-api + qr-web, multi-arch)
       image: docker:latest
       environment:
-          DOCKER_API_VERSION: "1.43"
-          DOCKER_BUILDKIT: "1"
-          BUILDKIT_PROGRESS: "plain"
+          DOCKER_API_VERSION: '1.43'
+          DOCKER_BUILDKIT: '1'
+          BUILDKIT_PROGRESS: 'plain'
           REGISTRY_URL: git.mifi.dev
           REGISTRY_REPO_API: git.mifi.dev/mifi-holdings/shorty-qr-api
           REGISTRY_REPO_WEB: git.mifi.dev/mifi-holdings/shorty-qr-web
@@ -52,6 +52,34 @@ steps:
               build_push ./qr-web $REGISTRY_REPO_WEB
               echo "✓ Images built and pushed (multi-arch)"
 
+    - name: Send Build Status Notification (success)
+      image: curlimages/curl
+      environment:
+          DISCORD_WEBHOOK_URL:
+              from_secret: discord_webhook_url
+      commands:
+          - |
+              BODY=$(printf '{"username":"WoodpeckerBot","content":"[%s - Build #%s] Docker images build success 🎉"}' "$CI_REPO" "$CI_PIPELINE_NUMBER")
+              curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" "$DISCORD_WEBHOOK_URL"
+      depends_on:
+          - Docker image build (qr-api + qr-web, multi-arch)
+      when:
+          - status: [success]
+
+    - name: Send Build Status Notification (failure)
+      image: curlimages/curl
+      environment:
+          DISCORD_WEBHOOK_URL:
+              from_secret: discord_webhook_url
+      commands:
+          - |
+              BODY=$(printf '{"username":"WoodpeckerBot","content":"[%s - Build #%s] Docker images build failure 💩"}' "$CI_REPO" "$CI_PIPELINE_NUMBER")
+              curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" "$DISCORD_WEBHOOK_URL"
+      depends_on:
+          - Docker image build (qr-api + qr-web, multi-arch)
+      when:
+          - status: [failure]
+
     - name: Trigger Portainer stack redeploy
       image: curlimages/curl:latest
       environment:
@@ -71,3 +99,31 @@ steps:
               echo "✓ Portainer redeploy triggered (HTTP $code)"
       depends_on:
           - Docker image build (qr-api + qr-web, multi-arch)
+
+    - name: Send Deploy Status Notification (success)
+      image: curlimages/curl
+      environment:
+          DISCORD_WEBHOOK_URL:
+              from_secret: discord_webhook_url
+      commands:
+          - |
+              BODY=$(printf '{"username":"WoodpeckerBot","content":"[%s - Build #%s] Production Deploy success 🎉"}' "$CI_REPO" "$CI_PIPELINE_NUMBER")
+              curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" "$DISCORD_WEBHOOK_URL"
+      depends_on:
+          - Trigger Portainer stack redeploy
+      when:
+          - status: [success]
+
+    - name: Send Deploy Status Notification (failure)
+      image: curlimages/curl
+      environment:
+          DISCORD_WEBHOOK_URL:
+              from_secret: discord_webhook_url
+      commands:
+          - |
+              BODY=$(printf '{"username":"WoodpeckerBot","content":"[%s - Build #%s] Production Deploy failure 💩"}' "$CI_REPO" "$CI_PIPELINE_NUMBER")
+              curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" "$DISCORD_WEBHOOK_URL"
+      depends_on:
+          - Trigger Portainer stack redeploy
+      when:
+          - status: [failure]

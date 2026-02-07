@@ -20,14 +20,25 @@ import {
     Button,
     ActionIcon,
 } from '@mantine/core';
-import { IconLink, IconFileText, IconMail, IconPhone, IconTrash } from '@tabler/icons-react';
+import {
+    IconLink,
+    IconFileText,
+    IconMail,
+    IconPhone,
+    IconTrash,
+} from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDebouncedCallback } from '@mantine/hooks';
 import { QrPreview } from './QrPreview';
 import { ExportPanel } from './ExportPanel';
 import { useProjects } from '@/contexts/ProjectsContext';
-import type { Project, RecipeOptions, ContentType, QrGradient } from '@/types/project';
+import type {
+    Project,
+    RecipeOptions,
+    ContentType,
+    QrGradient,
+} from '@/types/project';
 import { makeGradient } from '@/lib/qrStylingOptions';
 import classes from './Editor.module.css';
 
@@ -49,7 +60,11 @@ const CONTENT_TYPES: Array<{
         placeholder: 'https://example.com',
         inputLabel: 'Website address',
         validate: (v) =>
-            !v.trim() ? 'Enter a URL' : /^https?:\/\/.+/i.test(v.trim()) ? null : 'URL must start with http:// or https://',
+            !v.trim()
+                ? 'Enter a URL'
+                : /^https?:\/\/.+/i.test(v.trim())
+                  ? null
+                  : 'URL must start with http:// or https://',
     },
     {
         value: 'text',
@@ -76,7 +91,9 @@ const CONTENT_TYPES: Array<{
         validate: (v) => {
             if (!v.trim()) return 'Enter an email address';
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(v.trim()) ? null : 'Enter a valid email address';
+            return emailRegex.test(v.trim())
+                ? null
+                : 'Enter a valid email address';
         },
     },
     {
@@ -92,13 +109,16 @@ const CONTENT_TYPES: Array<{
         validate: (v) => {
             if (!v.trim()) return 'Enter a phone number';
             const digits = v.replace(/\D/g, '');
-            return digits.length >= 7 && digits.length <= 15 ? null : 'Enter a valid phone number (7–15 digits)';
+            return digits.length >= 7 && digits.length <= 15
+                ? null
+                : 'Enter a valid phone number (7–15 digits)';
         },
     },
 ];
 
 function inferContentType(content: string, current?: ContentType): ContentType {
-    if (current && CONTENT_TYPES.some((t) => t.value === current)) return current;
+    if (current && CONTENT_TYPES.some((t) => t.value === current))
+        return current;
     const t = content.trim();
     if (/^https?:\/\//i.test(t)) return 'url';
     if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t)) return 'email';
@@ -229,11 +249,16 @@ export function Editor({ id }: EditorProps) {
                         shortenEnabled: true,
                         recipeJson: (() => {
                             try {
-                                const recipe = JSON.parse(project.recipeJson || '{}') as RecipeOptions;
+                                const recipe = JSON.parse(
+                                    project.recipeJson || '{}',
+                                ) as RecipeOptions;
                                 recipe.data = data.shortUrl;
                                 return JSON.stringify(recipe);
                             } catch {
-                                return JSON.stringify({ ...project, data: data.shortUrl });
+                                return JSON.stringify({
+                                    ...project,
+                                    data: data.shortUrl,
+                                });
                             }
                         })(),
                     });
@@ -271,10 +296,17 @@ export function Editor({ id }: EditorProps) {
             if (!project) return;
             setContentTouched(false);
             try {
-                const r = JSON.parse(project.recipeJson || '{}') as RecipeOptions;
+                const r = JSON.parse(
+                    project.recipeJson || '{}',
+                ) as RecipeOptions;
                 r.contentType = type;
-                const patch: Partial<Project> = { recipeJson: JSON.stringify(r) };
-                if (type !== 'url' && (project.shortenEnabled || project.shortUrl)) {
+                const patch: Partial<Project> = {
+                    recipeJson: JSON.stringify(r),
+                };
+                if (
+                    type !== 'url' &&
+                    (project.shortenEnabled || project.shortUrl)
+                ) {
                     patch.shortenEnabled = false;
                     patch.shortUrl = null;
                     r.data = (project.originalUrl ?? '') || undefined;
@@ -293,15 +325,23 @@ export function Editor({ id }: EditorProps) {
             const content = project.originalUrl ?? '';
             let recipe: RecipeOptions = {};
             try {
-                recipe = JSON.parse(project.recipeJson || '{}') as RecipeOptions;
+                recipe = JSON.parse(
+                    project.recipeJson || '{}',
+                ) as RecipeOptions;
             } catch {
                 recipe = {};
             }
             const contentType = inferContentType(content, recipe.contentType);
             try {
-                const r = JSON.parse(project.recipeJson || '{}') as RecipeOptions;
+                const r = JSON.parse(
+                    project.recipeJson || '{}',
+                ) as RecipeOptions;
                 r.contentType = contentType;
-                if (contentType === 'url' && project.shortenEnabled && project.shortUrl) {
+                if (
+                    contentType === 'url' &&
+                    project.shortenEnabled &&
+                    project.shortUrl
+                ) {
                     r.data = project.shortUrl;
                 } else {
                     r.data = value || undefined;
@@ -310,7 +350,10 @@ export function Editor({ id }: EditorProps) {
                     originalUrl: value,
                     recipeJson: JSON.stringify(r),
                 };
-                if (contentType !== 'url' && (project.shortenEnabled || project.shortUrl)) {
+                if (
+                    contentType !== 'url' &&
+                    (project.shortenEnabled || project.shortUrl)
+                ) {
                     patch.shortenEnabled = false;
                     patch.shortUrl = null;
                     r.data = value || undefined;
@@ -352,7 +395,8 @@ export function Editor({ id }: EditorProps) {
     }
     const content = project.originalUrl ?? '';
     const contentType = inferContentType(content, recipe.contentType);
-    const typeConfig = CONTENT_TYPES.find((t) => t.value === contentType) ?? CONTENT_TYPES[0];
+    const typeConfig =
+        CONTENT_TYPES.find((t) => t.value === contentType) ?? CONTENT_TYPES[0];
     const contentError = contentTouched ? typeConfig.validate(content) : null;
     const isUrl = contentType === 'url';
     const qrData =
@@ -366,7 +410,11 @@ export function Editor({ id }: EditorProps) {
                 <Stack gap="md">
                     <Group justify="space-between">
                         <Text size="sm" c="dimmed">
-                            {saving ? 'Saving…' : lastSaved ? `Saved ${lastSaved.toLocaleTimeString()}` : ''}
+                            {saving
+                                ? 'Saving…'
+                                : lastSaved
+                                  ? `Saved ${lastSaved.toLocaleTimeString()}`
+                                  : ''}
                         </Text>
                         <ActionIcon
                             size="sm"
@@ -382,7 +430,9 @@ export function Editor({ id }: EditorProps) {
                         label="Project name"
                         placeholder="Untitled QR"
                         value={project.name}
-                        onChange={(e) => updateProject({ name: e.target.value })}
+                        onChange={(e) =>
+                            updateProject({ name: e.target.value })
+                        }
                     />
                     <Text size="sm" fw={500}>
                         Content type
@@ -390,7 +440,10 @@ export function Editor({ id }: EditorProps) {
                     <SegmentedControl
                         value={contentType}
                         onChange={(v) => setContentType(v as ContentType)}
-                        data={CONTENT_TYPES.map((t) => ({ value: t.value, label: t.label }))}
+                        data={CONTENT_TYPES.map((t) => ({
+                            value: t.value,
+                            label: t.label,
+                        }))}
                         fullWidth
                     />
                     <TextInput
@@ -418,8 +471,11 @@ export function Editor({ id }: EditorProps) {
                                     checked={project.shortenEnabled}
                                     onChange={(e) => {
                                         const checked = e.currentTarget.checked;
-                                        updateProject({ shortenEnabled: checked });
-                                        if (checked && project.originalUrl) handleShorten();
+                                        updateProject({
+                                            shortenEnabled: checked,
+                                        });
+                                        if (checked && project.originalUrl)
+                                            handleShorten();
                                     }}
                                 />
                             </Group>
@@ -451,24 +507,33 @@ export function Editor({ id }: EditorProps) {
                             value={recipe.imageOptions?.imageSize ?? 0.4}
                             onChange={(n) => {
                                 const r = { ...recipe };
-                                const v = typeof n === 'string' ? parseFloat(n) : n;
+                                const v =
+                                    typeof n === 'string' ? parseFloat(n) : n;
                                 r.imageOptions = {
                                     ...r.imageOptions,
-                                    imageSize: Number.isFinite(v) ? Math.max(0.1, Math.min(0.6, v)) : 0.4,
+                                    imageSize: Number.isFinite(v)
+                                        ? Math.max(0.1, Math.min(0.6, v))
+                                        : 0.4,
                                 };
-                                updateProject({ recipeJson: JSON.stringify(r) });
+                                updateProject({
+                                    recipeJson: JSON.stringify(r),
+                                });
                             }}
                         />
                         <Switch
                             label="Hide dots behind logo"
-                            checked={recipe.imageOptions?.hideBackgroundDots ?? true}
+                            checked={
+                                recipe.imageOptions?.hideBackgroundDots ?? true
+                            }
                             onChange={(e) => {
                                 const r = { ...recipe };
                                 r.imageOptions = {
                                     ...r.imageOptions,
                                     hideBackgroundDots: e.currentTarget.checked,
                                 };
-                                updateProject({ recipeJson: JSON.stringify(r) });
+                                updateProject({
+                                    recipeJson: JSON.stringify(r),
+                                });
                             }}
                         />
                     </Group>
@@ -477,7 +542,9 @@ export function Editor({ id }: EditorProps) {
                         Foreground
                     </Text>
                     <SegmentedControl
-                        value={recipe.dotsOptions?.gradient ? 'gradient' : 'solid'}
+                        value={
+                            recipe.dotsOptions?.gradient ? 'gradient' : 'solid'
+                        }
                         onChange={(v) => {
                             const r = { ...recipe };
                             if (v === 'gradient') {
@@ -487,13 +554,42 @@ export function Editor({ id }: EditorProps) {
                                     '#444444',
                                     0,
                                 );
-                                r.dotsOptions = { ...r.dotsOptions, gradient: g, color: undefined };
-                                r.cornersSquareOptions = { ...r.cornersSquareOptions, gradient: g, color: undefined };
-                                r.cornersDotOptions = { ...r.cornersDotOptions, gradient: g, color: undefined };
+                                r.dotsOptions = {
+                                    ...r.dotsOptions,
+                                    gradient: g,
+                                    color: undefined,
+                                };
+                                r.cornersSquareOptions = {
+                                    ...r.cornersSquareOptions,
+                                    gradient: g,
+                                    color: undefined,
+                                };
+                                r.cornersDotOptions = {
+                                    ...r.cornersDotOptions,
+                                    gradient: g,
+                                    color: undefined,
+                                };
                             } else {
-                                r.dotsOptions = { ...r.dotsOptions, gradient: undefined, color: recipe.dotsOptions?.color ?? '#000000' };
-                                r.cornersSquareOptions = { ...r.cornersSquareOptions, gradient: undefined, color: recipe.cornersSquareOptions?.color ?? '#000000' };
-                                r.cornersDotOptions = { ...r.cornersDotOptions, gradient: undefined, color: recipe.cornersSquareOptions?.color ?? '#000000' };
+                                r.dotsOptions = {
+                                    ...r.dotsOptions,
+                                    gradient: undefined,
+                                    color:
+                                        recipe.dotsOptions?.color ?? '#000000',
+                                };
+                                r.cornersSquareOptions = {
+                                    ...r.cornersSquareOptions,
+                                    gradient: undefined,
+                                    color:
+                                        recipe.cornersSquareOptions?.color ??
+                                        '#000000',
+                                };
+                                r.cornersDotOptions = {
+                                    ...r.cornersDotOptions,
+                                    gradient: undefined,
+                                    color:
+                                        recipe.cornersSquareOptions?.color ??
+                                        '#000000',
+                                };
                             }
                             updateProject({ recipeJson: JSON.stringify(r) });
                         }}
@@ -517,61 +613,147 @@ export function Editor({ id }: EditorProps) {
                                         const r = { ...recipe };
                                         const g: QrGradient = {
                                             ...recipe.dotsOptions!.gradient!,
-                                            type: (v as 'linear' | 'radial') ?? 'linear',
+                                            type:
+                                                (v as 'linear' | 'radial') ??
+                                                'linear',
                                         };
-                                        r.dotsOptions = { ...r.dotsOptions, gradient: g };
-                                        r.cornersSquareOptions = { ...r.cornersSquareOptions, gradient: g };
-                                        r.cornersDotOptions = { ...r.cornersDotOptions, gradient: g };
-                                        updateProject({ recipeJson: JSON.stringify(r) });
+                                        r.dotsOptions = {
+                                            ...r.dotsOptions,
+                                            gradient: g,
+                                        };
+                                        r.cornersSquareOptions = {
+                                            ...r.cornersSquareOptions,
+                                            gradient: g,
+                                        };
+                                        r.cornersDotOptions = {
+                                            ...r.cornersDotOptions,
+                                            gradient: g,
+                                        };
+                                        updateProject({
+                                            recipeJson: JSON.stringify(r),
+                                        });
                                     }}
                                 />
                                 <NumberInput
                                     label="Rotation (°)"
                                     min={0}
                                     max={360}
-                                    value={recipe.dotsOptions.gradient.rotation ?? 0}
+                                    value={
+                                        recipe.dotsOptions.gradient.rotation ??
+                                        0
+                                    }
                                     onChange={(n) => {
                                         const r = { ...recipe };
                                         const g: QrGradient = {
                                             ...recipe.dotsOptions!.gradient!,
-                                            rotation: typeof n === 'string' ? parseInt(n, 10) || 0 : n ?? 0,
+                                            rotation:
+                                                typeof n === 'string'
+                                                    ? parseInt(n, 10) || 0
+                                                    : (n ?? 0),
                                         };
-                                        r.dotsOptions = { ...r.dotsOptions, gradient: g };
-                                        r.cornersSquareOptions = { ...r.cornersSquareOptions, gradient: g };
-                                        r.cornersDotOptions = { ...r.cornersDotOptions, gradient: g };
-                                        updateProject({ recipeJson: JSON.stringify(r) });
+                                        r.dotsOptions = {
+                                            ...r.dotsOptions,
+                                            gradient: g,
+                                        };
+                                        r.cornersSquareOptions = {
+                                            ...r.cornersSquareOptions,
+                                            gradient: g,
+                                        };
+                                        r.cornersDotOptions = {
+                                            ...r.cornersDotOptions,
+                                            gradient: g,
+                                        };
+                                        updateProject({
+                                            recipeJson: JSON.stringify(r),
+                                        });
                                     }}
                                 />
                             </Group>
                             <Group grow>
                                 <ColorInput
                                     label="Start color"
-                                    value={recipe.dotsOptions.gradient.colorStops[0]?.color ?? '#000000'}
+                                    value={
+                                        recipe.dotsOptions.gradient
+                                            .colorStops[0]?.color ?? '#000000'
+                                    }
                                     onChange={(c) => {
                                         const r = { ...recipe };
-                                        const stops = [...(recipe.dotsOptions!.gradient!.colorStops || [])];
-                                        if (stops[0]) stops[0] = { ...stops[0], color: c };
-                                        else stops.unshift({ offset: 0, color: c });
-                                        const g: QrGradient = { ...recipe.dotsOptions!.gradient!, colorStops: stops };
-                                        r.dotsOptions = { ...r.dotsOptions, gradient: g };
-                                        r.cornersSquareOptions = { ...r.cornersSquareOptions, gradient: g };
-                                        r.cornersDotOptions = { ...r.cornersDotOptions, gradient: g };
-                                        updateProject({ recipeJson: JSON.stringify(r) });
+                                        const stops = [
+                                            ...(recipe.dotsOptions!.gradient!
+                                                .colorStops || []),
+                                        ];
+                                        if (stops[0])
+                                            stops[0] = {
+                                                ...stops[0],
+                                                color: c,
+                                            };
+                                        else
+                                            stops.unshift({
+                                                offset: 0,
+                                                color: c,
+                                            });
+                                        const g: QrGradient = {
+                                            ...recipe.dotsOptions!.gradient!,
+                                            colorStops: stops,
+                                        };
+                                        r.dotsOptions = {
+                                            ...r.dotsOptions,
+                                            gradient: g,
+                                        };
+                                        r.cornersSquareOptions = {
+                                            ...r.cornersSquareOptions,
+                                            gradient: g,
+                                        };
+                                        r.cornersDotOptions = {
+                                            ...r.cornersDotOptions,
+                                            gradient: g,
+                                        };
+                                        updateProject({
+                                            recipeJson: JSON.stringify(r),
+                                        });
                                     }}
                                 />
                                 <ColorInput
                                     label="End color"
-                                    value={recipe.dotsOptions.gradient.colorStops[1]?.color ?? recipe.dotsOptions.gradient.colorStops[0]?.color ?? '#444444'}
+                                    value={
+                                        recipe.dotsOptions.gradient
+                                            .colorStops[1]?.color ??
+                                        recipe.dotsOptions.gradient
+                                            .colorStops[0]?.color ??
+                                        '#444444'
+                                    }
                                     onChange={(c) => {
                                         const r = { ...recipe };
-                                        const stops = [...(recipe.dotsOptions!.gradient!.colorStops || [])];
-                                        if (stops[1]) stops[1] = { ...stops[1], color: c };
-                                        else stops.push({ offset: 1, color: c });
-                                        const g: QrGradient = { ...recipe.dotsOptions!.gradient!, colorStops: stops };
-                                        r.dotsOptions = { ...r.dotsOptions, gradient: g };
-                                        r.cornersSquareOptions = { ...r.cornersSquareOptions, gradient: g };
-                                        r.cornersDotOptions = { ...r.cornersDotOptions, gradient: g };
-                                        updateProject({ recipeJson: JSON.stringify(r) });
+                                        const stops = [
+                                            ...(recipe.dotsOptions!.gradient!
+                                                .colorStops || []),
+                                        ];
+                                        if (stops[1])
+                                            stops[1] = {
+                                                ...stops[1],
+                                                color: c,
+                                            };
+                                        else
+                                            stops.push({ offset: 1, color: c });
+                                        const g: QrGradient = {
+                                            ...recipe.dotsOptions!.gradient!,
+                                            colorStops: stops,
+                                        };
+                                        r.dotsOptions = {
+                                            ...r.dotsOptions,
+                                            gradient: g,
+                                        };
+                                        r.cornersSquareOptions = {
+                                            ...r.cornersSquareOptions,
+                                            gradient: g,
+                                        };
+                                        r.cornersDotOptions = {
+                                            ...r.cornersDotOptions,
+                                            gradient: g,
+                                        };
+                                        updateProject({
+                                            recipeJson: JSON.stringify(r),
+                                        });
                                     }}
                                 />
                             </Group>
@@ -583,9 +765,17 @@ export function Editor({ id }: EditorProps) {
                             onChange={(c) => {
                                 const r = { ...recipe };
                                 r.dotsOptions = { ...r.dotsOptions, color: c };
-                                r.cornersSquareOptions = { ...r.cornersSquareOptions, color: c };
-                                r.cornersDotOptions = { ...r.cornersDotOptions, color: c };
-                                updateProject({ recipeJson: JSON.stringify(r) });
+                                r.cornersSquareOptions = {
+                                    ...r.cornersSquareOptions,
+                                    color: c,
+                                };
+                                r.cornersDotOptions = {
+                                    ...r.cornersDotOptions,
+                                    color: c,
+                                };
+                                updateProject({
+                                    recipeJson: JSON.stringify(r),
+                                });
                             }}
                         />
                     )}
@@ -593,7 +783,11 @@ export function Editor({ id }: EditorProps) {
                         Background
                     </Text>
                     <SegmentedControl
-                        value={recipe.backgroundOptions?.gradient ? 'gradient' : 'solid'}
+                        value={
+                            recipe.backgroundOptions?.gradient
+                                ? 'gradient'
+                                : 'solid'
+                        }
                         onChange={(v) => {
                             const r = { ...recipe };
                             if (v === 'gradient') {
@@ -601,7 +795,8 @@ export function Editor({ id }: EditorProps) {
                                     ...r.backgroundOptions,
                                     gradient: makeGradient(
                                         'linear',
-                                        recipe.backgroundOptions?.color ?? '#ffffff',
+                                        recipe.backgroundOptions?.color ??
+                                            '#ffffff',
                                         '#e0e0e0',
                                         0,
                                     ),
@@ -611,7 +806,9 @@ export function Editor({ id }: EditorProps) {
                                 r.backgroundOptions = {
                                     ...r.backgroundOptions,
                                     gradient: undefined,
-                                    color: recipe.backgroundOptions?.color ?? '#ffffff',
+                                    color:
+                                        recipe.backgroundOptions?.color ??
+                                        '#ffffff',
                                 };
                             }
                             updateProject({ recipeJson: JSON.stringify(r) });
@@ -631,66 +828,123 @@ export function Editor({ id }: EditorProps) {
                                         { value: 'linear', label: 'Linear' },
                                         { value: 'radial', label: 'Radial' },
                                     ]}
-                                    value={recipe.backgroundOptions.gradient.type}
+                                    value={
+                                        recipe.backgroundOptions.gradient.type
+                                    }
                                     onChange={(v) => {
                                         const r = { ...recipe };
                                         r.backgroundOptions = {
                                             ...r.backgroundOptions,
                                             gradient: {
-                                                ...recipe.backgroundOptions!.gradient!,
-                                                type: (v as 'linear' | 'radial') ?? 'linear',
+                                                ...recipe.backgroundOptions!
+                                                    .gradient!,
+                                                type:
+                                                    (v as
+                                                        | 'linear'
+                                                        | 'radial') ?? 'linear',
                                             },
                                         };
-                                        updateProject({ recipeJson: JSON.stringify(r) });
+                                        updateProject({
+                                            recipeJson: JSON.stringify(r),
+                                        });
                                     }}
                                 />
                                 <NumberInput
                                     label="Rotation (°)"
                                     min={0}
                                     max={360}
-                                    value={recipe.backgroundOptions.gradient.rotation ?? 0}
+                                    value={
+                                        recipe.backgroundOptions.gradient
+                                            .rotation ?? 0
+                                    }
                                     onChange={(n) => {
                                         const r = { ...recipe };
                                         r.backgroundOptions = {
                                             ...r.backgroundOptions,
                                             gradient: {
-                                                ...recipe.backgroundOptions!.gradient!,
-                                                rotation: typeof n === 'string' ? parseInt(n, 10) || 0 : n ?? 0,
+                                                ...recipe.backgroundOptions!
+                                                    .gradient!,
+                                                rotation:
+                                                    typeof n === 'string'
+                                                        ? parseInt(n, 10) || 0
+                                                        : (n ?? 0),
                                             },
                                         };
-                                        updateProject({ recipeJson: JSON.stringify(r) });
+                                        updateProject({
+                                            recipeJson: JSON.stringify(r),
+                                        });
                                     }}
                                 />
                             </Group>
                             <Group grow>
                                 <ColorInput
                                     label="Start color"
-                                    value={recipe.backgroundOptions.gradient.colorStops[0]?.color ?? '#ffffff'}
+                                    value={
+                                        recipe.backgroundOptions.gradient
+                                            .colorStops[0]?.color ?? '#ffffff'
+                                    }
                                     onChange={(c) => {
                                         const r = { ...recipe };
-                                        const stops = [...(recipe.backgroundOptions!.gradient!.colorStops || [])];
-                                        if (stops[0]) stops[0] = { ...stops[0], color: c };
-                                        else stops.unshift({ offset: 0, color: c });
+                                        const stops = [
+                                            ...(recipe.backgroundOptions!
+                                                .gradient!.colorStops || []),
+                                        ];
+                                        if (stops[0])
+                                            stops[0] = {
+                                                ...stops[0],
+                                                color: c,
+                                            };
+                                        else
+                                            stops.unshift({
+                                                offset: 0,
+                                                color: c,
+                                            });
                                         r.backgroundOptions = {
                                             ...r.backgroundOptions,
-                                            gradient: { ...recipe.backgroundOptions!.gradient!, colorStops: stops },
+                                            gradient: {
+                                                ...recipe.backgroundOptions!
+                                                    .gradient!,
+                                                colorStops: stops,
+                                            },
                                         };
-                                        updateProject({ recipeJson: JSON.stringify(r) });
+                                        updateProject({
+                                            recipeJson: JSON.stringify(r),
+                                        });
                                     }}
                                 />
                                 <ColorInput
                                     label="End color"
-                                    value={recipe.backgroundOptions.gradient.colorStops[1]?.color ?? recipe.backgroundOptions.gradient.colorStops[0]?.color ?? '#e0e0e0'}
+                                    value={
+                                        recipe.backgroundOptions.gradient
+                                            .colorStops[1]?.color ??
+                                        recipe.backgroundOptions.gradient
+                                            .colorStops[0]?.color ??
+                                        '#e0e0e0'
+                                    }
                                     onChange={(c) => {
                                         const r = { ...recipe };
-                                        const stops = [...(recipe.backgroundOptions!.gradient!.colorStops || [])];
-                                        if (stops[1]) stops[1] = { ...stops[1], color: c };
-                                        else stops.push({ offset: 1, color: c });
+                                        const stops = [
+                                            ...(recipe.backgroundOptions!
+                                                .gradient!.colorStops || []),
+                                        ];
+                                        if (stops[1])
+                                            stops[1] = {
+                                                ...stops[1],
+                                                color: c,
+                                            };
+                                        else
+                                            stops.push({ offset: 1, color: c });
                                         r.backgroundOptions = {
                                             ...r.backgroundOptions,
-                                            gradient: { ...recipe.backgroundOptions!.gradient!, colorStops: stops },
+                                            gradient: {
+                                                ...recipe.backgroundOptions!
+                                                    .gradient!,
+                                                colorStops: stops,
+                                            },
                                         };
-                                        updateProject({ recipeJson: JSON.stringify(r) });
+                                        updateProject({
+                                            recipeJson: JSON.stringify(r),
+                                        });
                                     }}
                                 />
                             </Group>
@@ -701,8 +955,13 @@ export function Editor({ id }: EditorProps) {
                             value={recipe.backgroundOptions?.color ?? '#ffffff'}
                             onChange={(c) => {
                                 const r = { ...recipe };
-                                r.backgroundOptions = { ...r.backgroundOptions, color: c };
-                                updateProject({ recipeJson: JSON.stringify(r) });
+                                r.backgroundOptions = {
+                                    ...r.backgroundOptions,
+                                    color: c,
+                                };
+                                updateProject({
+                                    recipeJson: JSON.stringify(r),
+                                });
                             }}
                         />
                     )}
@@ -712,7 +971,10 @@ export function Editor({ id }: EditorProps) {
                         value={recipe.dotsOptions?.type ?? 'square'}
                         onChange={(v) => {
                             const r = { ...recipe };
-                            r.dotsOptions = { ...r.dotsOptions, type: v ?? 'square' };
+                            r.dotsOptions = {
+                                ...r.dotsOptions,
+                                type: v ?? 'square',
+                            };
                             updateProject({ recipeJson: JSON.stringify(r) });
                         }}
                     />
@@ -721,7 +983,10 @@ export function Editor({ id }: EditorProps) {
                         checked={recipe.dotsOptions?.roundSize ?? false}
                         onChange={(e) => {
                             const r = { ...recipe };
-                            r.dotsOptions = { ...r.dotsOptions, roundSize: e.currentTarget.checked };
+                            r.dotsOptions = {
+                                ...r.dotsOptions,
+                                roundSize: e.currentTarget.checked,
+                            };
                             updateProject({ recipeJson: JSON.stringify(r) });
                         }}
                     />
@@ -731,17 +996,27 @@ export function Editor({ id }: EditorProps) {
                         value={recipe.cornersSquareOptions?.type ?? 'square'}
                         onChange={(v) => {
                             const r = { ...recipe };
-                            r.cornersSquareOptions = { ...r.cornersSquareOptions, type: v ?? 'square' };
+                            r.cornersSquareOptions = {
+                                ...r.cornersSquareOptions,
+                                type: v ?? 'square',
+                            };
                             updateProject({ recipeJson: JSON.stringify(r) });
                         }}
                     />
                     <Select
                         label="Corner dot style"
                         data={CORNER_TYPES}
-                        value={recipe.cornersDotOptions?.type ?? recipe.cornersSquareOptions?.type ?? 'square'}
+                        value={
+                            recipe.cornersDotOptions?.type ??
+                            recipe.cornersSquareOptions?.type ??
+                            'square'
+                        }
                         onChange={(v) => {
                             const r = { ...recipe };
-                            r.cornersDotOptions = { ...r.cornersDotOptions, type: v ?? 'square' };
+                            r.cornersDotOptions = {
+                                ...r.cornersDotOptions,
+                                type: v ?? 'square',
+                            };
                             updateProject({ recipeJson: JSON.stringify(r) });
                         }}
                     />
@@ -766,8 +1041,13 @@ export function Editor({ id }: EditorProps) {
                             value={recipe.margin ?? 0}
                             onChange={(n) => {
                                 const r = { ...recipe };
-                                r.margin = typeof n === 'string' ? parseInt(n, 10) || 0 : n ?? 0;
-                                updateProject({ recipeJson: JSON.stringify(r) });
+                                r.margin =
+                                    typeof n === 'string'
+                                        ? parseInt(n, 10) || 0
+                                        : (n ?? 0);
+                                updateProject({
+                                    recipeJson: JSON.stringify(r),
+                                });
                             }}
                         />
                         <NumberInput
@@ -779,9 +1059,14 @@ export function Editor({ id }: EditorProps) {
                                 const r = { ...recipe };
                                 r.backgroundOptions = {
                                     ...r.backgroundOptions,
-                                    round: typeof n === 'string' ? parseInt(n, 10) || 0 : n ?? 0,
+                                    round:
+                                        typeof n === 'string'
+                                            ? parseInt(n, 10) || 0
+                                            : (n ?? 0),
                                 };
-                                updateProject({ recipeJson: JSON.stringify(r) });
+                                updateProject({
+                                    recipeJson: JSON.stringify(r),
+                                });
                             }}
                         />
                     </Group>
@@ -791,7 +1076,10 @@ export function Editor({ id }: EditorProps) {
                         value={recipe.qrOptions?.errorCorrectionLevel ?? 'M'}
                         onChange={(v) => {
                             const r = { ...recipe };
-                            r.qrOptions = { ...r.qrOptions, errorCorrectionLevel: v ?? 'M' };
+                            r.qrOptions = {
+                                ...r.qrOptions,
+                                errorCorrectionLevel: v ?? 'M',
+                            };
                             updateProject({ recipeJson: JSON.stringify(r) });
                         }}
                     />
@@ -822,11 +1110,15 @@ export function Editor({ id }: EditorProps) {
                 centered
             >
                 <Text size="sm" c="dimmed" mb="md">
-                    This cannot be undone. The project &quot;{project.name || 'Untitled QR'}&quot; will be
-                    permanently deleted.
+                    This cannot be undone. The project &quot;
+                    {project.name || 'Untitled QR'}&quot; will be permanently
+                    deleted.
                 </Text>
                 <Group justify="flex-end" gap="xs">
-                    <Button variant="subtle" onClick={() => setDeleteConfirmOpen(false)}>
+                    <Button
+                        variant="subtle"
+                        onClick={() => setDeleteConfirmOpen(false)}
+                    >
                         Cancel
                     </Button>
                     <Button color="red" onClick={handleDeleteProject}>
@@ -837,4 +1129,3 @@ export function Editor({ id }: EditorProps) {
         </div>
     );
 }
-

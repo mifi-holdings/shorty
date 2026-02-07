@@ -9,7 +9,10 @@ export interface ShortenResult {
     shortUrl: string;
 }
 
-export async function shortenUrl(env: Env, body: ShortenBody): Promise<ShortenResult> {
+export async function shortenUrl(
+    env: Env,
+    body: ShortenBody,
+): Promise<ShortenResult> {
     if (!env.KUTT_API_KEY) {
         throw new Error('KUTT_API_KEY is not configured');
     }
@@ -33,11 +36,15 @@ export async function shortenUrl(env: Env, body: ShortenBody): Promise<ShortenRe
     }
 
     const data = (await res.json()) as { link?: string; id?: string };
-    const link = data.link ?? (data.id ? `${env.SHORT_DOMAIN.replace(/\/$/, '')}/${data.id}` : null);
+    const link =
+        data.link ??
+        (data.id ? `${env.SHORT_DOMAIN.replace(/\/$/, '')}/${data.id}` : null);
     if (!link) {
         throw new Error('Kutt API did not return a short URL');
     }
 
-    const shortUrl = link.startsWith('http') ? link : `${env.SHORT_DOMAIN.replace(/\/$/, '')}/${link}`;
+    const shortUrl = link.startsWith('http')
+        ? link
+        : `${env.SHORT_DOMAIN.replace(/\/$/, '')}/${link.replace(/^\//, '')}`;
     return { shortUrl };
 }

@@ -12,7 +12,12 @@ interface QrPreviewProps {
     size?: number;
 }
 
-export function QrPreview({ data, recipe, logoUrl, size = 256 }: QrPreviewProps) {
+export function QrPreview({
+    data,
+    recipe,
+    logoUrl,
+    size = 256,
+}: QrPreviewProps) {
     const ref = useRef<HTMLDivElement>(null);
     const qrRef = useRef<QRCodeStyling | null>(null);
 

@@ -11,7 +11,10 @@ interface ProjectsContextValue {
     refetch: () => void;
     updateProjectInList: (id: string, patch: Partial<ProjectItem>) => void;
     removeProjectFromList: (id: string) => void;
-    moveProjectToFolder: (projectId: string, folderId: string | null) => Promise<void>;
+    moveProjectToFolder: (
+        projectId: string,
+        folderId: string | null,
+    ) => Promise<void>;
     createFolder: (name?: string) => Promise<FolderItem | null>;
     updateFolder: (id: string, patch: Partial<FolderItem>) => Promise<void>;
     deleteFolder: (id: string) => Promise<void>;
@@ -27,11 +30,7 @@ export function useProjects(): ProjectsContextValue {
     return ctx;
 }
 
-export function ProjectsProvider({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     const [projects, setProjects] = useState<ProjectItem[]>([]);
     const [folders, setFolders] = useState<FolderItem[]>([]);
 
@@ -50,11 +49,14 @@ export function ProjectsProvider({
             });
     }, []);
 
-    const updateProjectInList = useCallback((id: string, patch: Partial<ProjectItem>) => {
-        setProjects((prev) =>
-            prev.map((p) => (p.id === id ? { ...p, ...patch } : p)),
-        );
-    }, []);
+    const updateProjectInList = useCallback(
+        (id: string, patch: Partial<ProjectItem>) => {
+            setProjects((prev) =>
+                prev.map((p) => (p.id === id ? { ...p, ...patch } : p)),
+            );
+        },
+        [],
+    );
 
     const removeProjectFromList = useCallback((id: string) => {
         setProjects((prev) => prev.filter((p) => p.id !== id));
@@ -81,22 +83,29 @@ export function ProjectsProvider({
         });
         if (!res.ok) return null;
         const folder = await res.json();
-        setFolders((prev) => [...prev, folder].sort((a, b) => a.sortOrder - b.sortOrder));
+        setFolders((prev) =>
+            [...prev, folder].sort((a, b) => a.sortOrder - b.sortOrder),
+        );
         return folder;
     }, []);
 
-    const updateFolder = useCallback(async (id: string, patch: Partial<FolderItem>) => {
-        const res = await fetch(`/api/folders/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(patch),
-        });
-        if (!res.ok) return;
-        const folder = await res.json();
-        setFolders((prev) =>
-            prev.map((f) => (f.id === id ? folder : f)).sort((a, b) => a.sortOrder - b.sortOrder),
-        );
-    }, []);
+    const updateFolder = useCallback(
+        async (id: string, patch: Partial<FolderItem>) => {
+            const res = await fetch(`/api/folders/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(patch),
+            });
+            if (!res.ok) return;
+            const folder = await res.json();
+            setFolders((prev) =>
+                prev
+                    .map((f) => (f.id === id ? folder : f))
+                    .sort((a, b) => a.sortOrder - b.sortOrder),
+            );
+        },
+        [],
+    );
 
     const deleteFolder = useCallback(async (id: string) => {
         const res = await fetch(`/api/folders/${id}`, { method: 'DELETE' });

@@ -4,11 +4,14 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "lint": "pnpm -r run lint",
+        "build": "pnpm -r run build",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
+        "lint": "pnpm -r run lint",
+        "lint:fix": "pnpm -r run lint:fix",
         "test": "pnpm -r run test",
-        "build": "pnpm -r run build"
+        "test:coverage": "pnpm -r run test:coverage",
+        "test:watch": "pnpm -r run test:watch"
     },
     "devDependencies": {
         "prettier": "^3.4.2"
@@ -20,5 +23,10 @@
     "repository": {
         "type": "git",
         "url": "https://git.mifi.dev/mifi-holdings/shorty.git"
+    },
+    "pnpm": {
+        "overrides": {
+            "glob": "^13.0.0"
+        }
     }
 }

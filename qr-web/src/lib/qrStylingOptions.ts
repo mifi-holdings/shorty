@@ -67,7 +67,10 @@ export function buildQrStylingOptions(
 
     const cornersDot = recipe.cornersDotOptions;
     opts.cornersDotOptions = {
-        type: (cornersDot?.type as CornerType) ?? (cornersSq?.type as CornerType) ?? 'square',
+        type:
+            (cornersDot?.type as CornerType) ??
+            (cornersSq?.type as CornerType) ??
+            'square',
         color: cornersDot?.color ?? cornersSq?.color ?? '#000000',
         ...((cornersDot?.gradient ?? cornersSq?.gradient) && {
             gradient: cornersDot?.gradient ?? cornersSq?.gradient,

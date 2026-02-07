@@ -37,14 +37,14 @@ shorty/
 
 ## Key scripts (from repo root)
 
-| Command           | Effect |
-|-------------------|--------|
-| `pnpm install`    | Install deps for all workspaces |
-| `pnpm run lint`   | ESLint in qr-api and qr-web |
-| `pnpm run format:check` | Prettier check (no write) |
-| `pnpm run format`  | Prettier write |
-| `pnpm run test`   | Vitest in qr-api and qr-web |
-| `pnpm run build`  | Build qr-api (tsc) and qr-web (next build) |
+| Command                 | Effect                                     |
+| ----------------------- | ------------------------------------------ |
+| `pnpm install`          | Install deps for all workspaces            |
+| `pnpm run lint`         | ESLint in qr-api and qr-web                |
+| `pnpm run format:check` | Prettier check (no write)                  |
+| `pnpm run format`       | Prettier write                             |
+| `pnpm run test`         | Vitest in qr-api and qr-web                |
+| `pnpm run build`        | Build qr-api (tsc) and qr-web (next build) |
 
 Per-package: `pnpm --filter qr-api dev`, `pnpm --filter qr-web dev` (dev servers).
 
@@ -70,7 +70,7 @@ Per-package: `pnpm --filter qr-api dev`, `pnpm --filter qr-web dev` (dev servers
 - **TypeScript** only (qr-api and qr-web).
 - **Prettier:** 4 spaces, single quotes, trailing comma all, semicolons (see `.prettierrc`). Check with `pnpm run format:check`.
 - **ESLint:** Root `.eslintrc.cjs` for qr-api; qr-web has its own `.eslintrc.cjs` (Next + Prettier). No TSLint.
-- **Ignores:** `.gitignore` (e.g. node_modules, .pnpm-store, .next, dist, .env, *.tsbuildinfo); `.prettierignore` and ESLint `ignorePatterns` aligned (coverage, build dirs, .pnpm-store). Each app has `.dockerignore` to keep build context small.
+- **Ignores:** `.gitignore` (e.g. node_modules, .pnpm-store, .next, dist, .env, \*.tsbuildinfo); `.prettierignore` and ESLint `ignorePatterns` aligned (coverage, build dirs, .pnpm-store). Each app has `.dockerignore` to keep build context small.
 
 ## Where to change what
 

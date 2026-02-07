@@ -3,7 +3,13 @@ import path from 'path';
 import { randomUUID } from 'crypto';
 import type { Env } from './env.js';
 
-const IMAGE_MIME = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+const IMAGE_MIME = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'image/svg+xml',
+];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export function createMulter(env: Env) {
@@ -20,7 +26,11 @@ export function createMulter(env: Env) {
             if (IMAGE_MIME.includes(file.mimetype)) {
                 cb(null, true);
             } else {
-                cb(new Error('Only image files (jpeg, png, gif, webp) are allowed'));
+                cb(
+                    new Error(
+                        'Only image files (jpeg, png, gif, webp) are allowed',
+                    ),
+                );
             }
         },
     });

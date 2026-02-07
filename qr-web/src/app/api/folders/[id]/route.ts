@@ -6,10 +6,15 @@ export async function GET(
 ) {
     const { id } = await params;
     try {
-        const res = await fetch(`${QR_API_URL}/folders/${id}`, { cache: 'no-store' });
+        const res = await fetch(`${QR_API_URL}/folders/${id}`, {
+            cache: 'no-store',
+        });
         const data = await res.json();
         if (!res.ok) {
-            return Response.json({ error: data?.error ?? 'Not found' }, { status: res.status });
+            return Response.json(
+                { error: data?.error ?? 'Not found' },
+                { status: res.status },
+            );
         }
         return Response.json(data);
     } catch (e) {
@@ -31,7 +36,10 @@ export async function PUT(
         });
         const data = await res.json();
         if (!res.ok) {
-            return Response.json({ error: data?.error ?? 'Failed' }, { status: res.status });
+            return Response.json(
+                { error: data?.error ?? 'Failed' },
+                { status: res.status },
+            );
         }
         return Response.json(data);
     } catch (e) {
@@ -45,12 +53,17 @@ export async function DELETE(
 ) {
     const { id } = await params;
     try {
-        const res = await fetch(`${QR_API_URL}/folders/${id}`, { method: 'DELETE' });
+        const res = await fetch(`${QR_API_URL}/folders/${id}`, {
+            method: 'DELETE',
+        });
         if (res.status === 204) {
             return new Response(null, { status: 204 });
         }
         const data = await res.json();
-        return Response.json({ error: data?.error ?? 'Failed' }, { status: res.status });
+        return Response.json(
+            { error: data?.error ?? 'Failed' },
+            { status: res.status },
+        );
     } catch (e) {
         return Response.json({ error: String(e) }, { status: 502 });
     }

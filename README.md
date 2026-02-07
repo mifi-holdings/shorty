@@ -10,14 +10,14 @@ Designed for Docker/Portainer with Traefik. Uses **pnpm** everywhere; no Tailwin
 ## Prerequisites
 
 - **Traefik** with:
-  - External network `marina-net` (create with `docker network create marina-net` if needed)
-  - Cert resolver (e.g. `letsencrypt` or `lets-encrypt` — adjust labels in `docker-compose.yml` to match your Traefik)
+    - External network `marina-net` (create with `docker network create marina-net` if needed)
+    - Cert resolver (e.g. `letsencrypt` or `lets-encrypt` — adjust labels in `docker-compose.yml` to match your Traefik)
 - **DNS**: A records for `mifi.me`, `link.mifi.me`, `qr.mifi.dev` pointing to the host running Traefik
 - **Bind mount paths** on the host (create if missing):
-  - `/mnt/config/docker/kutt/postgres` — Kutt Postgres data
-  - `/mnt/config/docker/kutt/redis` — Kutt Redis data
-  - `/mnt/config/docker/qr/db` — qr-api SQLite directory
-  - `/mnt/config/docker/qr/uploads` — qr-api uploads (logos)
+    - `/mnt/config/docker/kutt/postgres` — Kutt Postgres data
+    - `/mnt/config/docker/kutt/redis` — Kutt Redis data
+    - `/mnt/config/docker/qr/db` — qr-api SQLite directory
+    - `/mnt/config/docker/qr/uploads` — qr-api uploads (logos)
 
 ## Kutt setup
 
@@ -32,8 +32,8 @@ Use prebuilt images and redeploy on push via webhook:
 
 1. In Portainer: **Stacks → Add stack**. Use **docker-compose.portainer.yml** (paste or pull from repo).
 2. Set env vars:
-   - **Required:** `DB_PASSWORD`, `JWT_SECRET`
-   - **Optional:** `REGISTRY` (default `git.mifi.dev`), `IMAGE_TAG` (default `latest`), `KUTT_API_KEY`
+    - **Required:** `DB_PASSWORD`, `JWT_SECRET`
+    - **Optional:** `REGISTRY` (default `git.mifi.dev`), `IMAGE_TAG` (default `latest`), `KUTT_API_KEY`
 3. Deploy. Then in the stack: **Webhooks** → add webhook. Copy the URL and add it as secret `portainer_webhook_url` in Woodpecker (repo secrets). On each push to `main`, the pipeline builds multi-arch images, pushes to the registry, and triggers this webhook to redeploy the stack.
 
 **Option B — Build from source**  
@@ -70,8 +70,8 @@ For local dev without Traefik, you can add a `ports` override for qr_web (e.g. `
 1. Open the repo in VS Code/Cursor and use **Dev Containers: Reopen in Container** (or Codespaces).
 2. `pnpm install` runs automatically. Env vars for qr-api are set in `devcontainer.json` (`DB_PATH`, `UPLOADS_PATH`, `KUTT_API_KEY`, `QR_API_URL`) so you can run qr-api and qr-web without a `.env` file.
 3. In the container, start the apps:
-   - **qr-api:** `pnpm --filter qr-api dev` (listens on 8080)
-   - **qr-web:** `pnpm --filter qr-web dev` (listens on 3000)
+    - **qr-api:** `pnpm --filter qr-api dev` (listens on 8080)
+    - **qr-web:** `pnpm --filter qr-web dev` (listens on 3000)
 4. Open the forwarded ports (3000 = qr-web, 8080 = qr-api). Data and uploads are stored under `.data/` in the repo (gitignored).
 5. For full stack (Kutt + qr-api + qr-web in Docker), run `docker compose up` from the **host** (or from inside the container if Docker-in-Docker is enabled). Set `DB_PASSWORD`, `JWT_SECRET`, and optionally `KUTT_API_KEY` in `.env` for that.
 

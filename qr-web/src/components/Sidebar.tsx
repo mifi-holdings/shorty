@@ -56,7 +56,9 @@ export function Sidebar() {
         deleteFolder,
     } = useProjects();
 
-    const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
+    const [expandedIds, setExpandedIds] = useState<Set<string>>(
+        () => new Set(),
+    );
     const [dragOverId, setDragOverId] = useState<string | null>(null);
     const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
     const [editingName, setEditingName] = useState('');
@@ -74,10 +76,13 @@ export function Sidebar() {
         });
     }, []);
 
-    const handleDragStart = useCallback((e: React.DragEvent, projectId: string) => {
-        e.dataTransfer.setData('application/x-project-id', projectId);
-        e.dataTransfer.effectAllowed = 'move';
-    }, []);
+    const handleDragStart = useCallback(
+        (e: React.DragEvent, projectId: string) => {
+            e.dataTransfer.setData('application/x-project-id', projectId);
+            e.dataTransfer.effectAllowed = 'move';
+        },
+        [],
+    );
 
     const handleDragOver = useCallback((e: React.DragEvent, zoneId: string) => {
         e.preventDefault();
@@ -93,15 +98,20 @@ export function Sidebar() {
         (e: React.DragEvent, targetFolderId: string | null) => {
             e.preventDefault();
             setDragOverId(null);
-            const projectId = e.dataTransfer.getData('application/x-project-id');
+            const projectId = e.dataTransfer.getData(
+                'application/x-project-id',
+            );
             if (!projectId) return;
-            const fid = targetFolderId === UNCATEGORIZED_ID ? null : targetFolderId;
+            const fid =
+                targetFolderId === UNCATEGORIZED_ID ? null : targetFolderId;
             moveProjectToFolder(projectId, fid);
         },
         [moveProjectToFolder],
     );
 
-    const uncategorized = projects.filter((p) => !p.folderId || p.folderId === '');
+    const uncategorized = projects.filter(
+        (p) => !p.folderId || p.folderId === '',
+    );
     const projectsByFolder = folders.map((f) => ({
         folder: f,
         projects: projects.filter((p) => p.folderId === f.id),
@@ -191,7 +201,10 @@ export function Sidebar() {
                         leftSection={<IconFolderPlus size={16} />}
                         onClick={() => {
                             createFolder().then((folder) => {
-                                if (folder) setExpandedIds((prev) => new Set([...prev, folder.id]));
+                                if (folder)
+                                    setExpandedIds(
+                                        (prev) => new Set([...prev, folder.id]),
+                                    );
                             });
                         }}
                     >
@@ -205,7 +218,13 @@ export function Sidebar() {
                     'Uncategorized',
                     null,
                     <>
-                        <Text size="xs" c="dimmed" fw={500} mb={4} className={classes.sectionLabel}>
+                        <Text
+                            size="xs"
+                            c="dimmed"
+                            fw={500}
+                            mb={4}
+                            className={classes.sectionLabel}
+                        >
                             Uncategorized
                         </Text>
                         <Stack gap={2}>
@@ -213,79 +232,95 @@ export function Sidebar() {
                         </Stack>
                     </>,
                 )}
-                {projectsByFolder.map(({ folder, projects: folderProjects }) => {
-                    const isExpanded = expandedIds.has(folder.id);
-                    return (
-                        <Box key={folder.id}>
-                            {renderDropZone(
-                                folder.id,
-                                folder.name,
-                                folder.id,
-                                <>
-                                    <Group
-                                        gap={4}
-                                        className={classes.folderHeader}
-                                        onClick={() => toggleFolder(folder.id)}
-                                    >
-                                        {isExpanded ? (
-                                            <IconChevronDown size={14} />
-                                        ) : (
-                                            <IconChevronRight size={14} />
-                                        )}
-                                        {isExpanded ? (
-                                            <IconFolderOpen size={16} />
-                                        ) : (
-                                            <IconFolder size={16} />
-                                        )}
-                                        {editingFolderId === folder.id ? (
-                                            <TextInput
-                                                size="xs"
-                                                value={editingName}
-                                                onChange={(e) => setEditingName(e.target.value)}
-                                                onBlur={saveEditFolder}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === 'Enter') saveEditFolder();
-                                                }}
-                                                onClick={(e) => e.stopPropagation()}
-                                                autoFocus
-                                            />
-                                        ) : (
-                                            <Text
-                                                size="sm"
-                                                fw={500}
-                                                style={{ flex: 1 }}
-                                                onDoubleClick={(e) => {
-                                                    e.stopPropagation();
-                                                    startEditFolder(folder);
-                                                }}
-                                            >
-                                                {folder.name}
-                                            </Text>
-                                        )}
-                                        {editingFolderId !== folder.id && (
-                                            <ActionIcon
-                                                size="xs"
-                                                variant="subtle"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleDeleteFolder(folder, folderProjects.length);
-                                                }}
-                                                aria-label="Delete folder"
-                                            >
-                                                <IconTrash size={12} />
-                                            </ActionIcon>
-                                        )}
-                                    </Group>
-                                    <Collapse in={isExpanded}>
-                                        <Stack gap={2} pl="md" mt={4}>
-                                            {folderProjects.map((p) => renderProjectLink(p))}
-                                        </Stack>
-                                    </Collapse>
-                                </>,
-                            )}
-                        </Box>
-                    );
-                })}
+                {projectsByFolder.map(
+                    ({ folder, projects: folderProjects }) => {
+                        const isExpanded = expandedIds.has(folder.id);
+                        return (
+                            <Box key={folder.id}>
+                                {renderDropZone(
+                                    folder.id,
+                                    folder.name,
+                                    folder.id,
+                                    <>
+                                        <Group
+                                            gap={4}
+                                            className={classes.folderHeader}
+                                            onClick={() =>
+                                                toggleFolder(folder.id)
+                                            }
+                                        >
+                                            {isExpanded ? (
+                                                <IconChevronDown size={14} />
+                                            ) : (
+                                                <IconChevronRight size={14} />
+                                            )}
+                                            {isExpanded ? (
+                                                <IconFolderOpen size={16} />
+                                            ) : (
+                                                <IconFolder size={16} />
+                                            )}
+                                            {editingFolderId === folder.id ? (
+                                                <TextInput
+                                                    size="xs"
+                                                    value={editingName}
+                                                    onChange={(e) =>
+                                                        setEditingName(
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    onBlur={saveEditFolder}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter')
+                                                            saveEditFolder();
+                                                    }}
+                                                    onClick={(e) =>
+                                                        e.stopPropagation()
+                                                    }
+                                                    autoFocus
+                                                />
+                                            ) : (
+                                                <Text
+                                                    size="sm"
+                                                    fw={500}
+                                                    style={{ flex: 1 }}
+                                                    onDoubleClick={(e) => {
+                                                        e.stopPropagation();
+                                                        startEditFolder(folder);
+                                                    }}
+                                                >
+                                                    {folder.name}
+                                                </Text>
+                                            )}
+                                            {editingFolderId !== folder.id && (
+                                                <ActionIcon
+                                                    size="xs"
+                                                    variant="subtle"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteFolder(
+                                                            folder,
+                                                            folderProjects.length,
+                                                        );
+                                                    }}
+                                                    aria-label="Delete folder"
+                                                >
+                                                    <IconTrash size={12} />
+                                                </ActionIcon>
+                                            )}
+                                        </Group>
+                                        <Collapse in={isExpanded}>
+                                            <Stack gap={2} pl="md" mt={4}>
+                                                {folderProjects.map((p) =>
+                                                    renderProjectLink(p),
+                                                )}
+                                            </Stack>
+                                        </Collapse>
+                                    </>,
+                                )}
+                            </Box>
+                        );
+                    },
+                )}
             </nav>
             <Modal
                 opened={folderToDelete !== null}
@@ -296,9 +331,11 @@ export function Sidebar() {
                 {folderToDelete && (
                     <>
                         <Text size="sm" c="dimmed" mb="md">
-                            This folder contains {folderToDelete.projectCount} project
-                            {folderToDelete.projectCount === 1 ? '' : 's'}. They will be moved to
-                            Uncategorized. Delete folder &quot;{folderToDelete.folder.name}&quot;?
+                            This folder contains {folderToDelete.projectCount}{' '}
+                            project
+                            {folderToDelete.projectCount === 1 ? '' : 's'}. They
+                            will be moved to Uncategorized. Delete folder &quot;
+                            {folderToDelete.folder.name}&quot;?
                         </Text>
                         <Group justify="flex-end" gap="xs">
                             <Button

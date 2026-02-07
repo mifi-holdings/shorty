@@ -4,18 +4,25 @@ import fs from 'fs';
 import type { Env } from '../env.js';
 import { createMulter } from '../upload.js';
 
-export function uploadsRouter(env: Env, baseUrl: string): ReturnType<typeof Router> {
+export function uploadsRouter(
+    env: Env,
+    baseUrl: string,
+): ReturnType<typeof Router> {
     const router = Router();
     const upload = createMulter(env);
 
-    router.post('/logo', upload.single('file'), (req: Request, res: Response) => {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
-        }
-        const filename = req.file.filename;
-        const url = `${baseUrl}/uploads/${filename}`;
-        return res.json({ filename, url });
-    });
+    router.post(
+        '/logo',
+        upload.single('file'),
+        (req: Request, res: Response) => {
+            if (!req.file) {
+                return res.status(400).json({ error: 'No file uploaded' });
+            }
+            const filename = req.file.filename;
+            const url = `${baseUrl}/uploads/${filename}`;
+            return res.json({ filename, url });
+        },
+    );
 
     router.get('/:filename', (req: Request, res: Response) => {
         const raw = req.params.filename;

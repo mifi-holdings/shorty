@@ -23,14 +23,19 @@ const updateBodySchema = createBodySchema.partial();
 
 const idParamSchema = z.object({ id: z.string().uuid() });
 
-export function projectsRouter(db: Database, baseUrl: string): ReturnType<typeof Router> {
+export function projectsRouter(
+    db: Database,
+    baseUrl: string,
+): ReturnType<typeof Router> {
     const router = Router();
     const toJson = (p: ReturnType<typeof getProject>) =>
         p
             ? {
                   ...p,
                   shortenEnabled: Boolean(p.shortenEnabled),
-                  logoUrl: p.logoFilename ? `${baseUrl}/uploads/${p.logoFilename}` : null,
+                  logoUrl: p.logoFilename
+                      ? `${baseUrl}/uploads/${p.logoFilename}`
+                      : null,
               }
             : null;
 
@@ -63,7 +68,9 @@ export function projectsRouter(db: Database, baseUrl: string): ReturnType<typeof
                 id: p.id,
                 name: p.name,
                 updatedAt: p.updatedAt,
-                logoUrl: p.logoFilename ? `${baseUrl}/uploads/${p.logoFilename}` : null,
+                logoUrl: p.logoFilename
+                    ? `${baseUrl}/uploads/${p.logoFilename}`
+                    : null,
                 folderId: p.folderId ?? null,
             }));
             return res.json(items);
@@ -97,7 +104,12 @@ export function projectsRouter(db: Database, baseUrl: string): ReturnType<typeof
         const project = updateProject(db, paramParsed.data.id, {
             name: data.name,
             originalUrl: data.originalUrl,
-            shortenEnabled: data.shortenEnabled !== undefined ? (data.shortenEnabled ? 1 : 0) : undefined,
+            shortenEnabled:
+                data.shortenEnabled !== undefined
+                    ? data.shortenEnabled
+                        ? 1
+                        : 0
+                    : undefined,
             shortUrl: data.shortUrl,
             recipeJson: data.recipeJson,
             logoFilename: data.logoFilename,

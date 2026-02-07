@@ -9,10 +9,15 @@ function rewriteLogoUrl(items: Array<{ logoUrl?: string | null }>) {
 
 export async function GET() {
     try {
-        const res = await fetch(`${QR_API_URL}/projects`, { cache: 'no-store' });
+        const res = await fetch(`${QR_API_URL}/projects`, {
+            cache: 'no-store',
+        });
         const data = await res.json();
         if (!res.ok) {
-            return Response.json({ error: data?.error ?? 'Failed' }, { status: res.status });
+            return Response.json(
+                { error: data?.error ?? 'Failed' },
+                { status: res.status },
+            );
         }
         return Response.json(Array.isArray(data) ? rewriteLogoUrl(data) : data);
     } catch (e) {
@@ -30,7 +35,10 @@ export async function POST(request: Request) {
         });
         const data = await res.json();
         if (!res.ok) {
-            return Response.json({ error: data?.error ?? 'Failed' }, { status: res.status });
+            return Response.json(
+                { error: data?.error ?? 'Failed' },
+                { status: res.status },
+            );
         }
         return Response.json(data);
     } catch (e) {
