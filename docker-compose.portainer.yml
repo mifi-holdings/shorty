@@ -137,9 +137,10 @@ services:
         networks:
             - marina-net
             - backend
+        # Use service_started so the stack can deploy even if qr_api is still broken; switch to service_healthy once qr_api image is fixed.
         depends_on:
             qr_api:
-                condition: service_healthy
+                condition: service_started
         environment:
             QR_API_URL: http://qr_api:8080
         healthcheck:

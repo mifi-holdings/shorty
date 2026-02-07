@@ -7,44 +7,44 @@ when:
     - event: manual
 
 steps:
-    install:
-        image: node:22-bookworm-slim
-        commands:
-            - corepack enable
-            - corepack prepare pnpm@latest --activate
-            - pnpm install --frozen-lockfile
+    - name: Install
+      image: node:22-bookworm-slim
+      commands:
+          - corepack enable
+          - corepack prepare pnpm@latest --activate
+          - pnpm install --frozen-lockfile
 
-    prettier:
-        image: node:22-bookworm-slim
-        commands:
-            - corepack enable && corepack prepare pnpm@latest --activate
-            - pnpm run format:check
-        depends_on:
-            - install
+    - name: Prettier
+      image: node:22-bookworm-slim
+      commands:
+          - corepack enable && corepack prepare pnpm@latest --activate
+          - pnpm run format:check
+      depends_on:
+          - Install
 
-    lint:
-        image: node:22-bookworm-slim
-        commands:
-            - corepack enable && corepack prepare pnpm@latest --activate
-            - pnpm run lint
-        depends_on:
-            - prettier
+    - name: Lint
+      image: node:22-bookworm-slim
+      commands:
+          - corepack enable && corepack prepare pnpm@latest --activate
+          - pnpm run lint
+      depends_on:
+          - Prettier
 
-    test:
-        image: node:22-bookworm-slim
-        commands:
-            - corepack enable && corepack prepare pnpm@latest --activate
-            - pnpm run test
-        depends_on:
-            - lint
+    - name: Tests & Coverage
+      image: node:22-bookworm-slim
+      commands:
+          - corepack enable && corepack prepare pnpm@latest --activate
+          - pnpm run test:coverage
+      depends_on:
+          - Lint
 
-    build:
-        image: node:22-bookworm-slim
-        commands:
-            - corepack enable && corepack prepare pnpm@latest --activate
-            - pnpm run build
-        depends_on:
-            - test
+    - name: Build
+      image: node:22-bookworm-slim
+      commands:
+          - corepack enable && corepack prepare pnpm@latest --activate
+          - pnpm run build
+      depends_on:
+          - Tests & Coverage
 
     # build-full:
     #     image: node:22-bookworm-slim
