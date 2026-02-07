@@ -13,6 +13,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME=0.0.0.0
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-lock.yaml* ./
 RUN pnpm install --prod

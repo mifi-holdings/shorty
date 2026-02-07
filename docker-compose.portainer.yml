@@ -140,7 +140,7 @@ services:
         # Use service_started so the stack can deploy even if qr_api is still broken; switch to service_healthy once qr_api image is fixed.
         depends_on:
             qr_api:
-                condition: service_started
+                condition: service_healthy
         environment:
             QR_API_URL: http://qr_api:8080
         healthcheck:
@@ -148,7 +148,7 @@ services:
                 - CMD
                 - node
                 - -e
-                - 'require("http").get("http://0.0.0.0:3000/", {timeout: 5000}, (r) => { r.resume(); process.exit(r.statusCode >= 200 && r.statusCode < 500 ? 0 : 1); }).on("error", () => process.exit(1))'
+                - 'require("http").get("http://localhost:3000/", {timeout: 5000}, (r) => { r.resume(); process.exit(r.statusCode >= 200 && r.statusCode < 500 ? 0 : 1); }).on("error", () => process.exit(1))'
             interval: 30s
             timeout: 10s
             retries: 3
