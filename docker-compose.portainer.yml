@@ -5,6 +5,7 @@
 services:
     kutt_db:
         image: postgres:16-alpine
+        container_name: mifi-shorty_kutt_db
         restart: unless-stopped
         networks:
             - backend
@@ -25,7 +26,8 @@ services:
             retries: 5
 
     kutt_redis:
-        image: redis:7-alpine
+        image: redis:8-alpine
+        container_name: mifi-shorty_kutt_redis
         restart: unless-stopped
         networks:
             - backend
@@ -35,6 +37,7 @@ services:
 
     kutt:
         image: kutt/kutt:latest
+        container_name: mifi-shorty_kutt
         restart: unless-stopped
         networks:
             - marina-net
@@ -73,7 +76,7 @@ services:
 
     qr_api:
         image: ${REGISTRY:-git.mifi.dev}/mifi-holdings/shorty-qr-api:${IMAGE_TAG:-latest}
-        container_name: qr_api
+        container_name: mifi-shorty_qr_api
         restart: unless-stopped
         networks:
             - backend
@@ -90,6 +93,7 @@ services:
 
     qr_web:
         image: ${REGISTRY:-git.mifi.dev}/mifi-holdings/shorty-qr-web:${IMAGE_TAG:-latest}
+        container_name: mifi-shorty_qr_web
         restart: unless-stopped
         networks:
             - marina-net
