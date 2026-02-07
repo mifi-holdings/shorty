@@ -39,7 +39,7 @@ steps:
                 local ctx=$1
                 local repo=$2
                 docker buildx build \
-                  --platform linux/amd64,linux/arm64 \
+                  --platform linux/amd64 \
                   --progress=plain \
                   --tag $repo:${CI_COMMIT_SHA} \
                   --tag $repo:latest \
