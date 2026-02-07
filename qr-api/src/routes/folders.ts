@@ -17,7 +17,7 @@ const createBodySchema = z.object({
 const updateBodySchema = createBodySchema.partial();
 const idParamSchema = z.object({ id: z.string().uuid() });
 
-export function foldersRouter(db: Database) {
+export function foldersRouter(db: Database): ReturnType<typeof Router> {
     const router = Router();
 
     router.get('/', (_req: Request, res: Response) => {

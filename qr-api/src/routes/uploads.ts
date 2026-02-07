@@ -4,7 +4,7 @@ import fs from 'fs';
 import type { Env } from '../env.js';
 import { createMulter } from '../upload.js';
 
-export function uploadsRouter(env: Env, baseUrl: string) {
+export function uploadsRouter(env: Env, baseUrl: string): ReturnType<typeof Router> {
     const router = Router();
     const upload = createMulter(env);
 
@@ -18,7 +18,8 @@ export function uploadsRouter(env: Env, baseUrl: string) {
     });
 
     router.get('/:filename', (req: Request, res: Response) => {
-        const filename = req.params.filename;
+        const raw = req.params.filename;
+        const filename = typeof raw === 'string' ? raw : raw?.[0];
         if (!filename || filename.includes('..') || path.isAbsolute(filename)) {
             return res.status(400).json({ error: 'Invalid filename' });
         }

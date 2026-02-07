@@ -23,7 +23,7 @@ const updateBodySchema = createBodySchema.partial();
 
 const idParamSchema = z.object({ id: z.string().uuid() });
 
-export function projectsRouter(db: Database, baseUrl: string) {
+export function projectsRouter(db: Database, baseUrl: string): ReturnType<typeof Router> {
     const router = Router();
     const toJson = (p: ReturnType<typeof getProject>) =>
         p

@@ -8,7 +8,7 @@ const bodySchema = z.object({
     customSlug: z.string().optional(),
 });
 
-export function shortenRouter(env: Env) {
+export function shortenRouter(env: Env): ReturnType<typeof Router> {
     const router = Router();
 
     router.post('/', async (req: Request, res: Response) => {
