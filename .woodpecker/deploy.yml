@@ -10,7 +10,7 @@ depends_on:
     - ci
 
 steps:
-    - name: Docker image build (qr-api + qr-web, multi-arch)
+    - name: Docker image build (qr-api + qr-web)
       image: docker:latest
       environment:
           DOCKER_API_VERSION: '1.43'
@@ -27,7 +27,7 @@ steps:
           - /var/run/docker.sock:/var/run/docker.sock
       commands:
           - set -e
-          - echo "=== Multi-arch Docker build (amd64 + arm64) ==="
+          - echo "=== Docker build ==="
           - 'echo "Commit SHA: ${CI_COMMIT_SHA:0:8}"'
           - |
               apk add --no-cache git
