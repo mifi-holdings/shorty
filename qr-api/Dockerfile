@@ -1,4 +1,5 @@
-FROM node:20-alpine AS builder
+# Use Debian-based image so better-sqlite3 prebuilds (glibc) work; Alpine/musl has no prebuilds.
+FROM node:20-bookworm-slim AS builder
 RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 COPY package.json pnpm-lock.yaml* ./
@@ -6,7 +7,7 @@ RUN pnpm install
 COPY . .
 RUN pnpm run build
 
-FROM node:20-alpine
+FROM node:20-bookworm-slim
 RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 ENV NODE_ENV=production

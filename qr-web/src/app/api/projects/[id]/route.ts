@@ -24,7 +24,13 @@ export async function GET(
         }
         return Response.json(data);
     } catch (e) {
-        return Response.json({ error: String(e) }, { status: 502 });
+        return Response.json(
+            {
+                error: 'QR API unreachable',
+                detail: e instanceof Error ? e.message : String(e),
+            },
+            { status: 502 },
+        );
     }
 }
 
@@ -55,7 +61,13 @@ export async function PUT(
         }
         return Response.json(data);
     } catch (e) {
-        return Response.json({ error: String(e) }, { status: 502 });
+        return Response.json(
+            {
+                error: 'QR API unreachable',
+                detail: e instanceof Error ? e.message : String(e),
+            },
+            { status: 502 },
+        );
     }
 }
 
@@ -77,6 +89,12 @@ export async function DELETE(
             { status: res.status },
         );
     } catch (e) {
-        return Response.json({ error: String(e) }, { status: 502 });
+        return Response.json(
+            {
+                error: 'QR API unreachable',
+                detail: e instanceof Error ? e.message : String(e),
+            },
+            { status: 502 },
+        );
     }
 }

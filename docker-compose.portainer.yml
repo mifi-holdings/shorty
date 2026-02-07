@@ -34,6 +34,11 @@ services:
         volumes:
             - /mnt/config/docker/kutt/redis:/data
         command: redis-server --appendonly yes
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
     kutt:
         image: kutt/kutt:latest
@@ -46,7 +51,17 @@ services:
             kutt_db:
                 condition: service_healthy
             kutt_redis:
-                condition: service_started
+                condition: service_healthy
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    "node -e \"require('http').get('http://127.0.0.1:3000/', (r) => { r.resume(); process.exit(r.statusCode >= 200 && r.statusCode < 500 ? 0 : 1); }).on('error', () => process.exit(1))\"",
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
         environment:
             ADMIN_EMAILS: ${ADMIN_EMAILS:?Set ADMIN_EMAILS}
             DEFAULT_DOMAIN: mifi.me
@@ -85,7 +100,8 @@ services:
             - 'traefik.http.routers.kutt-mifi.tls.certresolver=letsencrypt'
             - 'traefik.http.routers.kutt-mifi.service=kutt-short'
             - 'traefik.http.services.kutt-short.loadbalancer.server.port=3000'
-            - 'traefik.http.services.kutt-short.loadbalancer.serversTransport=kutt-long-timeout'
+            # Backend timeout: use transport from file provider (see traefik-kutt-timeout.example.yml).
+            - 'traefik.http.services.kutt-short.loadbalancer.serversTransport=kutt-long-timeout@file'
 
     qr_api:
         image: ${REGISTRY:-git.mifi.dev}/mifi-holdings/shorty-qr-api:${IMAGE_TAG:-latest}
@@ -103,6 +119,18 @@ services:
             KUTT_API_KEY: ${KUTT_API_KEY:-}
             KUTT_BASE_URL: http://kutt:3000
             SHORT_DOMAIN: https://mifi.me
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'node',
+                    '-e',
+                    "require('http').get('http://127.0.0.1:8080/health', (r) => { r.resume(); process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1))",
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
 
     qr_web:
         image: ${REGISTRY:-git.mifi.dev}/mifi-holdings/shorty-qr-web:${IMAGE_TAG:-latest}
@@ -112,9 +140,20 @@ services:
             - marina-net
             - backend
         depends_on:
-            - qr_api
+            qr_api:
+                condition: service_healthy
         environment:
             QR_API_URL: http://qr_api:8080
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    "node -e \"require('http').get('http://127.0.0.1:3000/', (r) => { r.resume(); process.exit(r.statusCode >= 200 && r.statusCode < 500 ? 0 : 1); }).on('error', () => process.exit(1))\"",
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 15s
         labels:
             - 'traefik.enable=true'
             - 'docker.network=marina-net'
