@@ -18,14 +18,23 @@ export async function shortenUrl(
     }
 
     const base = env.KUTT_BASE_URL.replace(/\/$/, '');
+    const apiKey = env.KUTT_API_KEY.trim();
+
+    // Extract domain from SHORT_DOMAIN (e.g., "https://mifi.me" -> "mifi.me")
+    const domain = env.SHORT_DOMAIN.replace(/^https?:\/\//, '').replace(
+        /\/$/,
+        '',
+    );
+
     const res = await fetch(`${base}/api/v2/links`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-API-Key': env.KUTT_API_KEY,
+            'X-API-Key': apiKey,
         },
         body: JSON.stringify({
             target: body.targetUrl,
+            domain: domain,
             ...(body.customSlug && { customurl: body.customSlug }),
         }),
     });

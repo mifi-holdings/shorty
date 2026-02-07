@@ -53,7 +53,7 @@ export interface RecipeOptions {
         type?: string;
         gradient?: QrGradient;
     };
-    shape?: 'square' | 'circle';
+    // shape removed - circle shape has rendering issues in qr-code-styling library
     margin?: number;
 }
 

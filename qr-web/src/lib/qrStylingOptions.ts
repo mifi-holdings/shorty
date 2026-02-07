@@ -28,7 +28,7 @@ export function buildQrStylingOptions(
         data: overrides.data ?? recipe.data ?? ' ',
         image: overrides.image,
         type: 'canvas',
-        shape: recipe.shape ?? 'square',
+        shape: 'square', // circle shape has rendering issues in qr-code-styling library
         margin: recipe.margin ?? 0,
         qrOptions: {
             type: 'canvas',

@@ -1020,19 +1020,7 @@ export function Editor({ id }: EditorProps) {
                             updateProject({ recipeJson: JSON.stringify(r) });
                         }}
                     />
-                    <Select
-                        label="Shape"
-                        data={[
-                            { value: 'square', label: 'Square' },
-                            { value: 'circle', label: 'Circle' },
-                        ]}
-                        value={recipe.shape ?? 'square'}
-                        onChange={(v) => {
-                            const r = { ...recipe };
-                            r.shape = (v as 'square' | 'circle') ?? 'square';
-                            updateProject({ recipeJson: JSON.stringify(r) });
-                        }}
-                    />
+                    {/* Shape select removed - circle shape has rendering issues in qr-code-styling library */}
                     <Group grow>
                         <NumberInput
                             label="Margin"
