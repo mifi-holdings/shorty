@@ -57,9 +57,10 @@ services:
             DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
             DB_NAME: ${DB_NAME:-kutt}
             DISALLOW_ANONYMOUS_LINKS: 'true'
-            DISALLOW_REGISTRATION: 'false'
+            DISALLOW_REGISTRATION: 'true'
             LINK_LENGTH: 6
             JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
+            MAIL_ENABLED: 'true'
             MAIL_HOST: 'mail.mifi.holdings'
             MAIL_PORT: '465'
             MAIL_SECURE: 'true'
@@ -67,10 +68,15 @@ services:
             MAIL_FROM: 'mifi Holdings Shorty <noreply@mifi.holdings>'
             MAIL_PASSWORD: '${SMTP_PASSWORD:?Set SMTP_PASSWORD}'
             NODE_ENV: production
+            OIDC_ENABLED: 'true'
+            OIDC_ISSUER: 'https://git.mifi.dev'
+            OIDC_CLIENT_ID: '2a6d1ecd-4e2f-42e5-922e-22e878230488'
+            OIDC_CLIENT_SECRET: '${OIDC_CLIENT_SECRET:?Set OIDC_CLIENT_SECRET}'
             REDIS_ENABLED: 'true'
             REDIS_HOST: kutt_redis
             REDIS_PORT: '6379'
-            SITE_DOMAIN: mifi.me
+            SITE_DOMAIN: link.mifi.me
+            SITE_NAME: 'mifi Shorty'
         labels:
             - 'traefik.enable=true'
             - 'docker.network=marina-net'
@@ -79,11 +85,6 @@ services:
             - 'traefik.http.routers.kutt-mifi.tls.certresolver=letsencrypt'
             - 'traefik.http.routers.kutt-mifi.service=kutt-short'
             - 'traefik.http.services.kutt-short.loadbalancer.server.port=3000'
-            - 'traefik.http.routers.kutt-link.rule=Host(`link.mifi.me`)'
-            - 'traefik.http.routers.kutt-link.entrypoints=websecure'
-            - 'traefik.http.routers.kutt-link.tls.certresolver=letsencrypt'
-            - 'traefik.http.routers.kutt-link.service=kutt'
-            - 'traefik.http.services.kutt.loadbalancer.server.port=3000'
 
     qr_api:
         image: ${REGISTRY:-git.mifi.dev}/mifi-holdings/shorty-qr-api:${IMAGE_TAG:-latest}
