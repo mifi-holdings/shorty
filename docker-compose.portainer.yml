@@ -75,7 +75,7 @@ services:
             DISALLOW_REGISTRATION: 'true'
             LINK_LENGTH: 6
             JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
-            MAIL_ENABLED: 'true'
+            MAIL_ENABLED: 'false'
             MAIL_HOST: 'mail.mifi.holdings'
             MAIL_PORT: '465'
             MAIL_SECURE: 'true'
@@ -90,7 +90,6 @@ services:
             REDIS_ENABLED: 'true'
             REDIS_HOST: kutt_redis
             REDIS_PORT: '6379'
-            SITE_DOMAIN: link.mifi.me
             SITE_NAME: 'mifi Shorty'
         labels:
             - 'traefik.enable=true'

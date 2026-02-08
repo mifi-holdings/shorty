@@ -76,11 +76,7 @@ services:
             - 'traefik.http.routers.kutt-mifi.tls.certresolver=letsencrypt'
             - 'traefik.http.routers.kutt-mifi.service=kutt-short'
             - 'traefik.http.services.kutt-short.loadbalancer.server.port=3000'
-            - 'traefik.http.routers.kutt-link.rule=Host(`link.mifi.me`)'
-            - 'traefik.http.routers.kutt-link.entrypoints=websecure'
-            - 'traefik.http.routers.kutt-link.tls.certresolver=letsencrypt'
-            - 'traefik.http.routers.kutt-link.service=kutt'
-            - 'traefik.http.services.kutt.loadbalancer.server.port=3000'
+            - 'traefik.http.services.kutt-short.loadbalancer.serversTransport=kutt-long-timeout@file'
 
     qr_api:
         build:
