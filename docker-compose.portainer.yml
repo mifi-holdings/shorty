@@ -64,18 +64,21 @@ services:
             start_period: 40s
         environment:
             ADMIN_EMAILS: ${ADMIN_EMAILS:?Set ADMIN_EMAILS}
+            CUSTOM_DOMAIN_USE_HTTPS: 'true'
             DEFAULT_DOMAIN: mifi.me
             DB_CLIENT: pg
             DB_HOST: kutt_db
             DB_PORT: '5432'
             DB_USER: ${DB_USER:-kutt}
             DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+            DB_POOL_MIN: '2'
+            DB_POOL_MAX: '10'
             DB_NAME: ${DB_NAME:-kutt}
             DISALLOW_ANONYMOUS_LINKS: 'true'
             DISALLOW_REGISTRATION: 'true'
             LINK_LENGTH: 6
             JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
-            MAIL_ENABLED: 'false'
+            MAIL_ENABLED: 'true'
             MAIL_HOST: 'mail.mifi.holdings'
             MAIL_PORT: '465'
             MAIL_SECURE: 'true'
@@ -90,6 +93,7 @@ services:
             REDIS_ENABLED: 'true'
             REDIS_HOST: kutt_redis
             REDIS_PORT: '6379'
+            SERVER_CNAME_ADDRESS: 'link.mifi.me'
             SITE_NAME: 'mifi Shorty'
         labels:
             - 'traefik.enable=true'
