@@ -65,7 +65,7 @@ services:
         environment:
             ADMIN_EMAILS: ${ADMIN_EMAILS:?Set ADMIN_EMAILS}
             CUSTOM_DOMAIN_USE_HTTPS: 'true'
-            DEFAULT_DOMAIN: mifi.me
+            DEFAULT_DOMAIN: ${DEFAULT_DOMAIN:?Set DEFAULT_DOMAIN}
             DB_CLIENT: pg
             DB_HOST: kutt_db
             DB_PORT: '5432'
@@ -79,12 +79,12 @@ services:
             LINK_LENGTH: 6
             JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
             MAIL_ENABLED: 'true'
-            MAIL_HOST: 'mail.mifi.holdings'
-            MAIL_PORT: '465'
+            MAIL_HOST: ${MAIL_HOST:?Set MAIL_HOST}
+            MAIL_PORT: ${MAIL_PORT:?Set MAIL_PORT}
             MAIL_SECURE: 'true'
-            MAIL_USER: 'mailbot@mifi.ventures'
-            MAIL_FROM: 'mifi Holdings Shorty <noreply@mifi.holdings>'
-            MAIL_PASSWORD: '${SMTP_PASSWORD:?Set SMTP_PASSWORD}'
+            MAIL_USER: ${MAIL_USER:?Set MAIL_USER}
+            MAIL_FROM: ${MAIL_FROM:?Set MAIL_FROM}
+            MAIL_PASSWORD: '${MAIL_PASSWORD:?Set MAIL_PASSWORD}'
             NODE_ENV: production
             # OIDC_ENABLED: 'true'
             # OIDC_ISSUER: 'https://git.mifi.dev'
@@ -93,19 +93,19 @@ services:
             REDIS_ENABLED: 'true'
             REDIS_HOST: kutt_redis
             REDIS_PORT: '6379'
-            SERVER_CNAME_ADDRESS: 'link.mifi.me'
-            SITE_NAME: 'mifi Shorty'
+            SERVER_CNAME_ADDRESS: ${SERVER_CNAME_ADDRESS:-${DEFAULT_DOMAIN}}
+            SITE_NAME: ${SITE_NAME:-Kutt}
         labels:
             - 'traefik.enable=true'
             - 'docker.network=marina-net'
-            - 'traefik.http.routers.kutt-mifi.rule=Host(`mifi.me`)'
+            - 'traefik.http.routers.kutt-mifi.rule=Host(`${DEFAULT_DOMAIN}`)'
             - 'traefik.http.routers.kutt-mifi.entrypoints=websecure'
             - 'traefik.http.routers.kutt-mifi.tls.certresolver=letsencrypt'
             - 'traefik.http.routers.kutt-mifi.service=kutt-short'
             - 'traefik.http.services.kutt-short.loadbalancer.server.port=3000'
             - 'traefik.http.services.kutt-short.loadbalancer.serversTransport=kutt-long-timeout@file'
             # UI
-            - 'traefik.http.routers.kutt-mifi-ui.rule=Host(`link.mifi.me`)'
+            - 'traefik.http.routers.kutt-mifi-ui.rule=Host(`${SERVER_CNAME_ADDRESS}`)'
             - 'traefik.http.routers.kutt-mifi-ui.entrypoints=websecure'
             - 'traefik.http.routers.kutt-mifi-ui.tls.certresolver=letsencrypt'
             - 'traefik.http.routers.kutt-mifi-ui.service=kutt-short-ui'
