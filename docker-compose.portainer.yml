@@ -103,8 +103,14 @@ services:
             - 'traefik.http.routers.kutt-mifi.tls.certresolver=letsencrypt'
             - 'traefik.http.routers.kutt-mifi.service=kutt-short'
             - 'traefik.http.services.kutt-short.loadbalancer.server.port=3000'
-            # Backend timeout: use transport from file provider (see traefik-kutt-timeout.example.yml).
             - 'traefik.http.services.kutt-short.loadbalancer.serversTransport=kutt-long-timeout@file'
+            # UI
+            - 'traefik.http.routers.kutt-mifi-ui.rule=Host(`link.mifi.me`)'
+            - 'traefik.http.routers.kutt-mifi-ui.entrypoints=websecure'
+            - 'traefik.http.routers.kutt-mifi-ui.tls.certresolver=letsencrypt'
+            - 'traefik.http.routers.kutt-mifi-ui.service=kutt-short-ui'
+            - 'traefik.http.services.kutt-short-ui.loadbalancer.server.port=3000'
+            - 'traefik.http.services.kutt-short-ui.loadbalancer.serversTransport=kutt-long-timeout@file'
 
     qr_api:
         image: ${REGISTRY:-git.mifi.dev}/mifi-holdings/shorty-qr-api:${IMAGE_TAG:-latest}
