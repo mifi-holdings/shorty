@@ -22,6 +22,24 @@ steps:
       depends_on:
           - Install
 
+    - name: Send Prettier Status Notification (failure)
+      image: curlimages/curl
+      environment:
+          MATTERMOST_BOT_ACCESS_TOKEN:
+              from_secret: mattermost_bot_access_token
+          MATTERMOST_CHANNEL_ID:
+              from_secret: mattermost_tests_channel_id
+          MATTERMOST_POST_API_URL:
+              from_secret: mattermost_post_api_url
+      commands:
+          - |
+              BODY=$(printf '{"channel_id":"%s","message":"[%s - Build #%s] Prettier failure 💩"}' "$MATTERMOST_CHANNEL_ID" "$CI_REPO" "$CI_PIPELINE_NUMBER")
+              curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" -H "Authorization: Bearer $MATTERMOST_BOT_ACCESS_TOKEN" $MATTERMOST_POST_API_URL
+      depends_on:
+          - Prettier
+      when:
+          - status: [failure]
+
     - name: Lint
       image: node:22-bookworm-slim
       commands:
@@ -38,6 +56,24 @@ steps:
       depends_on:
           - Lint
 
+    - name: Send Lint Status Notification (failure)
+      image: curlimages/curl
+      environment:
+          MATTERMOST_BOT_ACCESS_TOKEN:
+              from_secret: mattermost_bot_access_token
+          MATTERMOST_CHANNEL_ID:
+              from_secret: mattermost_tests_channel_id
+          MATTERMOST_POST_API_URL:
+              from_secret: mattermost_post_api_url
+      commands:
+          - |
+              BODY=$(printf '{"channel_id":"%s","message":"[%s - Build #%s] Lint failure 💩"}' "$MATTERMOST_CHANNEL_ID" "$CI_REPO" "$CI_PIPELINE_NUMBER")
+              curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" -H "Authorization: Bearer $MATTERMOST_BOT_ACCESS_TOKEN" $MATTERMOST_POST_API_URL
+      depends_on:
+          - Lint
+      when:
+          - status: [failure]
+
     - name: Build
       image: node:22-bookworm-slim
       commands:
@@ -46,23 +82,41 @@ steps:
       depends_on:
           - Tests & Coverage
 
-    # build-full:
-    #     image: node:22-bookworm-slim
-    #     commands:
-    #         - apt-get update
-    #         - apt-get install -y --no-install-recommends ca-certificates libasound2 libatk-bridge2.0-0 libatk1.0-0 libcups2 libdrm2 libgbm1 libgtk-3-0 libnss3 libxcomposite1 libxdamage1 libxfixes3 libxkbcommon0 libxrandr2
-    #         - rm -rf /var/lib/apt/lists/*
-    #         - corepack enable && corepack prepare pnpm@latest --activate
-    #         - pnpm run critical-css:install
-    #         - pnpm run build:full
-    #     depends_on:
-    #         - build
+    - name: Send Build Status Notification (failure)
+      image: curlimages/curl
+      environment:
+          MATTERMOST_BOT_ACCESS_TOKEN:
+              from_secret: mattermost_bot_access_token
+          MATTERMOST_CHANNEL_ID:
+              from_secret: mattermost_tests_channel_id
+          MATTERMOST_POST_API_URL:
+              from_secret: mattermost_post_api_url
+      commands:
+          - |
+              BODY=$(printf '{"channel_id":"%s","message":"[%s - Build #%s] Build failure 💩"}' "$MATTERMOST_CHANNEL_ID" "$CI_REPO" "$CI_PIPELINE_NUMBER")
+              curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" -H "Authorization: Bearer $MATTERMOST_BOT_ACCESS_TOKEN" $MATTERMOST_POST_API_URL
+      depends_on:
+          - Build
+      when:
+          - status: [failure]
 
-    # e2e:
-    #     image: node:22-bookworm-slim
-    #     commands:
-    #         - corepack enable && corepack prepare pnpm@latest --activate
-    #         - pnpm exec playwright install chromium --with-deps
-    #         - pnpm run test:e2e
-    #     depends_on:
-    #         - build
+    - name: Send CI Pipeline Status Notification (success)
+      image: curlimages/curl
+      environment:
+          MATTERMOST_BOT_ACCESS_TOKEN:
+              from_secret: mattermost_bot_access_token
+          MATTERMOST_CHANNEL_ID:
+              from_secret: mattermost_tests_channel_id
+          MATTERMOST_POST_API_URL:
+              from_secret: mattermost_post_api_url
+      commands:
+          - |
+              BODY=$(printf '{"channel_id":"%s","message":"[%s - Build #%s] CI pipeline success 🎉"}' "$MATTERMOST_CHANNEL_ID" "$CI_REPO" "$CI_PIPELINE_NUMBER")
+              curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" -H "Authorization: Bearer $MATTERMOST_BOT_ACCESS_TOKEN" $MATTERMOST_POST_API_URL
+      depends_on:
+          - Install
+          - Lint
+          - Prettier
+          - Build
+      when:
+          - status: [success]

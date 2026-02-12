@@ -1,7 +1,6 @@
 # Portainer stack: registry-based images (no build). Use with CI/CD webhook redeploy.
 # Set in Portainer stack env (or .env): REGISTRY, IMAGE_TAG (defaults below).
 # Images: ${REGISTRY}/mifi-holdings/shorty-qr-api:${IMAGE_TAG}, shorty-qr-web:${IMAGE_TAG}
-
 services:
     kutt_db:
         image: postgres:16-alpine
