@@ -11,13 +11,13 @@ steps:
       image: node:24-bookworm-slim
       commands:
           - corepack enable
-          - corepack prepare pnpm@latest --activate
+          - corepack prepare pnpm@10.28.2 --activate
           - pnpm install --frozen-lockfile
 
     - name: Prettier
       image: node:24-bookworm-slim
       commands:
-          - corepack enable && corepack prepare pnpm@latest --activate
+          - corepack enable && corepack prepare pnpm@10.28.2 --activate
           - pnpm run format:check
       depends_on:
           - Install
@@ -43,7 +43,7 @@ steps:
     - name: Lint
       image: node:24-bookworm-slim
       commands:
-          - corepack enable && corepack prepare pnpm@latest --activate
+          - corepack enable && corepack prepare pnpm@10.28.2 --activate
           - pnpm run lint
       depends_on:
           - Prettier
@@ -51,7 +51,7 @@ steps:
     - name: Tests & Coverage
       image: node:24-bookworm-slim
       commands:
-          - corepack enable && corepack prepare pnpm@latest --activate
+          - corepack enable && corepack prepare pnpm@10.28.2 --activate
           - pnpm run test:coverage
       depends_on:
           - Lint
@@ -77,7 +77,7 @@ steps:
     - name: Build
       image: node:24-bookworm-slim
       commands:
-          - corepack enable && corepack prepare pnpm@latest --activate
+          - corepack enable && corepack prepare pnpm@10.28.2 --activate
           - pnpm run build
       depends_on:
           - Tests & Coverage
