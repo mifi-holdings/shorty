@@ -92,7 +92,8 @@ services:
             REDIS_ENABLED: 'true'
             REDIS_HOST: kutt_redis
             REDIS_PORT: '6379'
-            SERVER_CNAME_ADDRESS: ${SERVER_CNAME_ADDRESS:-${DEFAULT_DOMAIN}}
+            # Compose does not support nested ${A:-${B}}; set SERVER_CNAME_ADDRESS in stack env (Kutt UI host).
+            SERVER_CNAME_ADDRESS: ${SERVER_CNAME_ADDRESS:-link.mifi.me}
             SITE_NAME: ${SITE_NAME:-Kutt}
         labels:
             - 'traefik.enable=true'
