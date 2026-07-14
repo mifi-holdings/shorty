@@ -1,5 +1,5 @@
 # Build stage: use npm (not pnpm) to avoid workspace issues with better-sqlite3.
-FROM node:20-bookworm-slim AS builder
+FROM node:24-bookworm-slim AS builder
 RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
@@ -13,7 +13,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Runtime: copy pre-built node_modules from builder.
-FROM node:20-bookworm-slim
+FROM node:24-bookworm-slim
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=builder /app/node_modules ./node_modules
