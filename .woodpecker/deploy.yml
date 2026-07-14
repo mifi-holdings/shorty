@@ -122,7 +122,7 @@ steps:
               BODY=$(printf '{"channel_id":"%s","message":"[%s - Build #%s] Production Deploy success 🎉"}' "$MATTERMOST_CHANNEL_ID" "$CI_REPO" "$CI_PIPELINE_NUMBER")
               curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" -H "Authorization: Bearer $MATTERMOST_BOT_ACCESS_TOKEN" $MATTERMOST_POST_API_URL
       depends_on:
-          - Trigger Portainer stack redeploy
+          - Trigger Dockhand stack redeploy
       when:
           - status: [success]
 
@@ -140,6 +140,6 @@ steps:
               BODY=$(printf '{"channel_id":"%s","message":"[%s - Build #%s] Production Deploy failure 💩"}' "$MATTERMOST_CHANNEL_ID" "$CI_REPO" "$CI_PIPELINE_NUMBER")
               curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" -H "Authorization: Bearer $MATTERMOST_BOT_ACCESS_TOKEN" $MATTERMOST_POST_API_URL
       depends_on:
-          - Trigger Portainer stack redeploy
+          - Trigger Dockhand stack redeploy
       when:
           - status: [failure]
