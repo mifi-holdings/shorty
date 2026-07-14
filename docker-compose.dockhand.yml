@@ -121,12 +121,12 @@ services:
             - /mnt/config/docker/qr/db:/data
             - /mnt/config/docker/qr/uploads:/uploads
         environment:
-            PORT: '8080'
-            DB_PATH: /data/db.sqlite
-            UPLOADS_PATH: /uploads
+            PORT: ${API_PORT:-8080}
+            DB_PATH: ${DB_PATH:-/data/db.sqlite}
+            UPLOADS_PATH: ${UPLOADS_PATH:-/uploads}
             KUTT_API_KEY: ${KUTT_API_KEY:-}
-            KUTT_BASE_URL: http://kutt:3000
-            SHORT_DOMAIN: https://mifi.me
+            KUTT_BASE_URL: ${KUTT_BASE_URL:-http://kutt:3000}
+            SHORT_DOMAIN: ${SHORT_DOMAIN:-https://mifi.me}
         healthcheck:
             test:
                 - CMD
@@ -150,7 +150,7 @@ services:
             qr_api:
                 condition: service_healthy
         environment:
-            QR_API_URL: http://qr_api:8080
+            QR_API_URL: ${QR_API_URL:-http://qr_api:8080}
         healthcheck:
             test:
                 - CMD

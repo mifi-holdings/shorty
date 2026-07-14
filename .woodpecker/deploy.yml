@@ -88,16 +88,16 @@ steps:
       when:
           - status: [failure]
 
-    - name: Trigger Portainer stack redeploy
+    - name: Trigger Dockhand stack redeploy
       image: curlimages/curl:latest
       environment:
-          PORTAINER_WEBHOOK_URL:
-              from_secret: portainer_webhook_url
+          WEBHOOK_URL:
+              from_secret: dockhand_webhook_url
       commands:
           - set -e
           - echo "=== Triggering Portainer stack redeploy ==="
           - |
-              resp=$(curl -s -w "\n%{http_code}" -X POST "$PORTAINER_WEBHOOK_URL")
+              resp=$(curl -s -w "\n%{http_code}" -X POST "$WEBHOOK_URL")
               body=$(echo "$resp" | head -n -1)
               code=$(echo "$resp" | tail -n 1)
               if [ "$code" != "200" ] && [ "$code" != "204" ]; then
