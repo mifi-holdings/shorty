@@ -16,7 +16,7 @@
         "test:watch": "vitest"
     },
     "dependencies": {
-        "better-sqlite3": "^11.6.0",
+        "better-sqlite3": "^12.11.1",
         "cors": "^2.8.5",
         "express": "^4.21.1",
         "multer": "^2.0.2",
@@ -32,13 +32,13 @@
         "@types/node": "^22.9.0",
         "@typescript-eslint/eslint-plugin": "^8.15.0",
         "@typescript-eslint/parser": "^8.15.0",
+        "@vitest/coverage-v8": "^2.1.6",
         "eslint": "^9.15.0",
         "eslint-config-prettier": "^9.1.0",
+        "supertest": "^7.0.0",
         "tsx": "^4.19.2",
         "typescript": "^5.6.3",
-        "vitest": "^2.1.6",
-        "@vitest/coverage-v8": "^2.1.6",
-        "supertest": "^7.0.0"
+        "vitest": "^2.1.6"
     },
     "engines": {
         "node": ">=20"

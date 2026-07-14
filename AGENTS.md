@@ -56,7 +56,7 @@ Per-package: `pnpm --filter qr-api dev`, `pnpm --filter qr-web dev` (dev servers
 
 ## CI/CD (Woodpecker)
 
-- **CI** (runs on PR, push to main, tag, manual): Node 22, pnpm, then `format:check` → `lint` → `test` → `build`. No Docker in CI.
+- **CI** (runs on PR, push to main, tag, manual): Node 24, pnpm, then `format:check` → `lint` → `test` → `build`. No Docker in CI.
 - **Deploy** (runs on main push/tag/manual after CI): Uses `docker buildx` to build **two** images from `./qr-api` and `./qr-web` with `--platform linux/amd64,linux/arm64`, tags `:latest` and `:${CI_COMMIT_SHA}`, pushes to `git.mifi.dev/mifi-holdings/shorty-qr-api` and `shorty-qr-web`, then POSTs `portainer_webhook_url` to trigger Portainer stack redeploy.
 - **Secrets:** `gitea_registry_username`, `gitea_package_token`, `portainer_webhook_url`.
 
